@@ -1,0 +1,46 @@
+# Local credentials and settings
+.env
+.env.*
+!.env.example
+config.local.*
+*.pem
+*.key
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local execution data
+outputs/
+raw_responses/
+private/
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.log
+
+# Original media and model artifacts
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.bmp
+*.mp4
+*.safetensors
+*.ckpt
+*.pt
+*.pth
+*.zip
+
+# Editor / operating system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
