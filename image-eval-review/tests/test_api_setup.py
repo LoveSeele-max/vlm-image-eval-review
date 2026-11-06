@@ -9,10 +9,12 @@ import unittest
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from unittest.mock import patch
+from urllib.error import HTTPError
+from urllib.request import Request, build_opener
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from api_connection import ConnectionTestError, normalize_base_url, test_connection
+from api_connection import CLIENT_USER_AGENT, ConnectionTestError, normalize_base_url, test_connection
 from configure_api import SettingsWindow
 
 SECRET = "fake-key-for-local-tests"
@@ -23,8 +25,16 @@ class Handler(BaseHTTPRequestHandler):
         self.server.requests.put({
             "path": self.path,
             "authorization": self.headers.get("Authorization"),
+            "user_agent": self.headers.get("User-Agent"),
+            "accept": self.headers.get("Accept"),
             "body": json.loads(self.rfile.read(int(self.headers["Content-Length"]))),
         })
+        if self.server.reject_library_agent and self.headers.get("User-Agent", "").startswith("Python-urllib"):
+            self.send_response(403)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(b'{"error_code":1010,"error_name":"browser_signature_banned"}')
+            return
         self.send_response(self.server.response_code)
         if self.server.redirect:
             self.send_header("Location", self.server.redirect)
@@ -41,6 +51,7 @@ class SetupTests(unittest.TestCase):
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
         self.server.response_code = 200
         self.server.redirect = None
+        self.server.reject_library_agent = False
         self.server.requests = queue.Queue()
         self.payload = {
             "status": "completed",
@@ -76,6 +87,8 @@ class SetupTests(unittest.TestCase):
         request = self.server.requests.get_nowait()
         self.assertEqual(request["path"], "/v1/responses")
         self.assertEqual(request["authorization"], "Bearer " + SECRET)
+        self.assertEqual(request["user_agent"], CLIENT_USER_AGENT)
+        self.assertEqual(request["accept"], "application/json")
         self.assertEqual(request["body"]["input"], "只回复：连接成功")
         self.assertFalse(request["body"]["stream"])
         self.assertEqual(receipt["text"], "连接成功")
@@ -108,6 +121,60 @@ class SetupTests(unittest.TestCase):
         self.assertIn("401", str(context.exception))
         self.assertNotIn(SECRET, str(context.exception))
         self.assertEqual(self.server.requests.qsize(), 1)
+
+    def test_descriptive_client_agent_passes_library_agent_filter(self):
+        self.server.reject_library_agent = True
+        old_request = Request(
+            self.base_url + "/responses",
+            data=b'{"model":"test-model","input":"test"}',
+            headers={"Content-Type": "application/json"},
+        )
+        with self.assertRaises(HTTPError) as context:
+            build_opener().open(old_request, timeout=2)
+        self.assertEqual(context.exception.code, 403)
+        context.exception.close()
+        receipt = test_connection(self.base_url, "test-model")
+        self.assertTrue(receipt["success"])
+        self.assertEqual(self.server.requests.qsize(), 2)
+
+    def test_cloudflare_1010_is_not_misreported_as_model_permission(self):
+        self.server.response_code = 403
+        self.set_payload({
+            "error_code": 1010, "error_name": "browser_signature_banned",
+            "detail": "unnecessary raw content: " + SECRET,
+        })
+        with self.assertRaises(ConnectionTestError) as context:
+            test_connection(self.base_url, "test-model")
+        message = str(context.exception)
+        self.assertIn("Cloudflare 1010", message)
+        self.assertIn("尚不能据此判断", message)
+        self.assertNotIn(SECRET, message)
+        self.assertNotIn("unnecessary raw content", message)
+        self.assertEqual(self.server.requests.qsize(), 1)
+
+    def test_generic_403_preserves_redacted_provider_diagnostic(self):
+        self.server.response_code = 403
+        self.set_payload({"error": {
+            "message": "Model access denied; token=" + SECRET + "; Bearer another-secret; sk-other-secret",
+        }})
+        with self.assertRaises(ConnectionTestError) as context:
+            test_connection(self.base_url, "test-model")
+        message = str(context.exception)
+        self.assertIn("可能是网关拦截或权限限制", message)
+        self.assertIn("Model access denied", message)
+        self.assertNotIn(SECRET, message)
+        self.assertNotIn("another-secret", message)
+        self.assertNotIn("sk-other-secret", message)
+
+    def test_html_gateway_response_is_not_dumped_into_error(self):
+        self.server.response_code = 403
+        self.server.response_body = ("<html>private gateway page " + SECRET + "</html>").encode()
+        with self.assertRaises(ConnectionTestError) as context:
+            test_connection(self.base_url, "test-model")
+        message = str(context.exception)
+        self.assertIn("403", message)
+        self.assertNotIn("<html>", message)
+        self.assertNotIn(SECRET, message)
 
     def test_redirect_is_not_followed(self):
         self.server.response_code = 307

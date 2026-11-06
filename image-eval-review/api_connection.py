@@ -2,6 +2,7 @@
 
 import json
 import os
+import re
 import time
 from datetime import datetime
 from urllib.error import HTTPError, URLError
@@ -9,6 +10,8 @@ from urllib.parse import urlsplit, urlunsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 
 MAX_RESPONSE_BYTES = 2 * 1024 * 1024
+MAX_ERROR_BYTES = 16 * 1024
+CLIENT_USER_AGENT = "vlm-image-eval-review/0.1"
 
 
 class ConnectionTestError(Exception):
@@ -67,6 +70,53 @@ def integer_or_none(value):
     return value if isinstance(value, int) and not isinstance(value, bool) else None
 
 
+def explain_http_error(error, api_key):
+    code = error.code
+    try:
+        raw = error.read(MAX_ERROR_BYTES)
+    except (OSError, ValueError):
+        raw = b""
+    finally:
+        error.close()
+    try:
+        payload = json.loads(raw)
+    except (ValueError, UnicodeError):
+        payload = {}
+    if not isinstance(payload, dict):
+        payload = {}
+
+    if code == 403 and (
+        payload.get("error_code") in (1010, "1010")
+        or payload.get("error_name") == "browser_signature_banned"
+    ):
+        return (
+            "HTTP 403：Cloudflare 1010 拦截了客户端标识，"
+            "尚不能据此判断密钥或模型权限。请确认使用最新版工具；"
+            "若仍被拦截，请联系中转服务商检查网关规则。"
+        )
+    messages = {
+        400: "请求参数未被接受，请核对模型名和接口协议。",
+        401: "密钥校验未通过，请检查密钥和服务商配置。",
+        403: "请求被拒绝，可能是网关拦截或权限限制。",
+        404: "未找到接口或模型，请检查地址和服务商配置。",
+        429: "请求受到限制，请检查调用频率和账户额度。",
+    }
+    message = f"HTTP {code}：" + messages.get(code, "服务商拒绝或未能完成请求。")
+    provider_error = payload.get("error")
+    detail = provider_error.get("message") if isinstance(provider_error, dict) else None
+    if not isinstance(detail, str):
+        detail = payload.get("detail")
+    if isinstance(detail, str):
+        # Only extract a bounded, redacted diagnostic field; never log the raw body.
+        detail = redact(detail, api_key)
+        detail = re.sub(r"(?i)\bBearer\s+\S+", "Bearer [REDACTED]", detail)
+        detail = re.sub(r"\bsk-[A-Za-z0-9_-]+", "[REDACTED]", detail)
+        detail = " ".join(detail.split())[:500]
+        if detail:
+            message += "\n服务端提示：" + detail
+    return message
+
+
 def test_connection(base_url, model, timeout=120):
     settings = validate_settings(base_url, model)
     api_key = os.environ.get("VLM_API_KEY", "").strip()
@@ -86,6 +136,8 @@ def test_connection(base_url, model, timeout=120):
         headers={
             "Authorization": "Bearer " + api_key,
             "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": CLIENT_USER_AGENT,
         },
         method="POST",
     )
@@ -94,16 +146,7 @@ def test_connection(base_url, model, timeout=120):
         with build_opener(NoRedirect()).open(request, timeout=timeout) as response:
             raw = response.read(MAX_RESPONSE_BYTES + 1)
     except HTTPError as exc:
-        messages = {
-            401: "密钥无效或已过期。",
-            403: "账号没有该模型或接口的访问权限。",
-            404: "未找到 Responses 接口，请检查地址和服务商文档。",
-            429: "额度不足或请求受到限流，请查看服务商控制台。",
-        }
-        message = messages.get(exc.code, "服务商拒绝或未能完成请求。")
-        code = exc.code
-        exc.close()
-        raise ConnectionTestError(f"HTTP {code}：{message}") from None
+        raise ConnectionTestError(explain_http_error(exc, api_key)) from None
     except (URLError, TimeoutError, OSError, ValueError, UnicodeError):
         raise ConnectionTestError("连接失败或超时，请检查接口地址、网络和代理设置。") from None
     if len(raw) > MAX_RESPONSE_BYTES:
