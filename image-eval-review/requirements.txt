@@ -1,2 +1,2 @@
-# B01 image inspection; the API configuration window uses the standard library.
+# Image inspection/preprocessing; API setup and annotation server use the standard library.
 Pillow==12.2.0

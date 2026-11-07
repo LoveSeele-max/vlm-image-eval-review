@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="annotation-token" content="__APP_TOKEN__">
+  <title>生图人工标注台</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header>
+    <div><p class="eyebrow">IMAGE REVIEW · 人工初标</p><h1>生图标注台</h1></div>
+    <div class="identity"><label for="annotator">标注人</label><input id="annotator" value="水水" maxlength="200"><span id="version"></span></div>
+  </header>
+  <main>
+    <aside>
+      <h2>样本清单</h2>
+      <label for="scope">查看范围</label>
+      <select id="scope"><option value="smoke">三张联调样本</option><option value="development">全部开发集</option><option value="all">全部样本</option></select>
+      <p id="overall-progress"></p>
+      <progress id="overall-bar" max="1" value="0"></progress>
+      <nav id="samples" aria-label="样本列表"></nav>
+      <p class="muted small">按参考与固定规则逐项填写。木桌不评测。所有记录保存在这台电脑。</p>
+    </aside>
+    <section class="workspace">
+      <div id="notice" role="status" aria-live="polite"></div>
+      <div class="sample-heading"><div><p class="eyebrow">当前候选</p><h2 id="sample-title">正在读取…</h2></div><span id="sample-progress" class="pill"></span></div>
+      <section class="images" aria-label="参考与候选图片">
+        <figure><figcaption>主参考 <span>REF-MAIN</span></figcaption><button class="image-button" data-image="REF-MAIN" aria-label="放大主参考"><img src="/api/image/REF-MAIN" alt="主参考 REF-MAIN"></button></figure>
+        <figure><figcaption>补充参考 <span>REF-SUPPLEMENT</span></figcaption><button class="image-button" data-image="REF-SUPPLEMENT" aria-label="放大补充参考"><img src="/api/image/REF-SUPPLEMENT" alt="补充参考 REF-SUPPLEMENT"></button></figure>
+        <figure class="candidate"><figcaption>候选图 <span id="candidate-caption"></span></figcaption><button id="candidate-button" class="image-button" aria-label="放大候选图"><img id="candidate-image" alt="当前匿名候选图"></button></figure>
+      </section>
+      <p class="muted small">点击图片放大。参考与候选均使用固定整图输入，保持比例。</p>
+      <details class="prompt"><summary>原始提示词与本轮范围</summary><p id="prompt"></p><p class="muted">原文可能包含 wooden table，本轮忽略该要求。主体特征、结构和已分配提示词条目分别判断。</p></details>
+      <section class="annotation-panel">
+        <div class="criterion-nav"><div id="criteria" role="navigation" aria-label="检查项列表"></div></div>
+        <form id="label-form">
+          <div class="criterion-heading"><div><p id="dimension" class="eyebrow"></p><h3 id="criterion-name"></h3></div><span id="required" class="pill"></span></div>
+          <p id="criterion-id" class="muted small"></p>
+          <details id="rule-details" open><summary>本项判定边界</summary><dl><dt>符合</dt><dd id="pass-rule"></dd><dt>不符</dt><dd id="fail-rule"></dd><dt>不可判断</dt><dd id="unknown-rule"></dd></dl><p id="extra-rule" class="muted small"></p></details>
+          <div class="form-pair"><div><label for="status">判断结果</label><select id="status"><option value="">尚未选择</option><option value="pass">符合</option><option value="fail">不符</option><option value="unjudgeable">不可判断</option></select></div><div><label for="region">检查部位</label><input id="region" maxlength="10000"></div></div>
+          <label for="observation">实际观察</label><textarea id="observation" rows="3" maxlength="10000" placeholder="描述实际看到了什么，或哪个部分无法观察。"></textarea>
+          <label for="reason">判断原因</label><textarea id="reason" rows="3" maxlength="10000" placeholder="说明观察如何对应本项规则，一句短话即可。"></textarea>
+          <div id="revision-box"><label for="change-reason">修改原因 <span id="revision-hint" class="muted small">初始记录确认后修改必填</span></label><input id="change-reason" maxlength="2000" placeholder="例如：放大查看后补充可见证据"></div>
+          <p id="provenance" class="muted small"></p>
+          <div class="actions"><button type="button" id="previous" class="secondary">上一项</button><button type="submit" id="save">保存本项</button><button type="button" id="next" class="secondary">下一项</button><span id="dirty" class="muted small"></span></div>
+        </form>
+      </section>
+      <footer class="sample-footer"><div><strong id="confirmation-state"></strong><p class="muted small">确认会保留本图完整初始快照。后续修改另记历史，原快照保留。</p></div><div class="actions"><button id="export" class="secondary">导出本图记录</button><button id="confirm">确认本图初始记录</button></div></footer>
+    </section>
+  </main>
+  <dialog id="image-dialog"><button id="close-image" class="secondary" aria-label="关闭放大图片">关闭</button><img id="zoom-image" alt="放大的整图"></dialog>
+</body>
+</html>
