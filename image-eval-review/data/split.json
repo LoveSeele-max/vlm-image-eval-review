@@ -1,0 +1,110 @@
+{
+  "schema_version": 1,
+  "split_version": "seed_family_v1",
+  "split_status": "frozen",
+  "frozen_at": "2026-11-07T15:56:01+08:00",
+  "policy": {
+    "version": "B04_v1",
+    "target_development_fraction": "1/3",
+    "selection": "enumerate nonempty proper group subsets; minimize absolute fraction error",
+    "tie_break": "ascending SHA-256(namespace + group_id), then group_id",
+    "namespace": "vlm-image-eval-review/B04/v1/",
+    "smoke_selection": "user chooses exactly 3 distinct development IDs later"
+  },
+  "partitions": {
+    "development": {
+      "group_ids": [
+        "group_004"
+      ],
+      "sample_ids": [
+        "sample_008",
+        "sample_010",
+        "sample_014",
+        "sample_016",
+        "sample_020",
+        "sample_026",
+        "sample_029",
+        "sample_036",
+        "sample_038",
+        "sample_042"
+      ],
+      "sample_count": 10,
+      "fraction": "10/40"
+    },
+    "holdout": {
+      "group_ids": [
+        "group_001",
+        "group_002",
+        "group_003"
+      ],
+      "sample_ids": [
+        "sample_001",
+        "sample_002",
+        "sample_003",
+        "sample_004",
+        "sample_007",
+        "sample_009",
+        "sample_011",
+        "sample_012",
+        "sample_013",
+        "sample_015",
+        "sample_017",
+        "sample_018",
+        "sample_019",
+        "sample_021",
+        "sample_023",
+        "sample_024",
+        "sample_025",
+        "sample_027",
+        "sample_028",
+        "sample_030",
+        "sample_032",
+        "sample_034",
+        "sample_035",
+        "sample_039",
+        "sample_041",
+        "sample_044",
+        "sample_045",
+        "sample_046",
+        "sample_047",
+        "sample_048"
+      ],
+      "sample_count": 30,
+      "fraction": "30/40"
+    }
+  },
+  "group_rank_sha256": {
+    "group_001": "53a6db8816fdbf5d76ed6fc37b5c899d33a591028e0eb9d33aa5c4f4eb1b4ab6",
+    "group_002": "aaa442c96c6879f361ea6f9de8a2280b8773a701a430fa5e477bb8f071bd43a0",
+    "group_003": "56058f21b0eec456746d12168e93979c47d0bb8a10c0590692b6ab1040765d05",
+    "group_004": "3aa81792d9751d1149c82bf04bdb63397080d2ec7777ce854fe64a31465cfb78"
+  },
+  "inputs_sha256": {
+    "image-eval-review/data/manifest.build.json": "975c92c2bd0ac29ca5b40a2026e975fa18ca1a90bafc1779490c733553c4dfae",
+    "A03_候选图片来源清单.jsonl": "a1d1793a47de318cfa3656e27d2cbe9e04000567c1e57d8a0768dda58c8ad1a2",
+    "B01_图片检查清单.jsonl": "49eb8fc6a104a1738458b791fea96ea887e4f0a0af31e6db66be18ad2fddfcee",
+    "image-eval-review/data/prompt_requirements.json": "e39c6bc7806899685929ce4b20d09f60cf13a1e7d04d147f1a105b4ac71e74ca",
+    "image-eval-review/data/generation_config.json": "67f547cfaa345b3d639b955b5171b73cbd35c2266450adfc68979c637174e228",
+    "image-eval-review/build_manifest.py": "bd74c94da2bea6ab72d2af609390caa1fda506f698d2e282aa064f9e6cb1f808",
+    "image-eval-review/data/grouping.build.json": "1159c6c9869537902b9262781e161fd5a1873432ecc40278fbc749fabfa4d063",
+    "image-eval-review/data/manifest.draft.jsonl": "d69160737cd575e6093e56e8387d80b12c79eafb3825b4d5ec200e2cbad6f9c4",
+    "image-eval-review/data/sample_sources.jsonl": "c07f30d36fe0756cd97e60fab78986baa480fdcc9acdac721bc92c5d6cd8a745",
+    "image-eval-review/data/reference_assets.json": "895c165b021e0f810a6a90fe0643a6c908bf4a05c2019b01bb4c5df0d2ff99a5",
+    "image-eval-review/data/near_duplicate_review.json": "fe07edc037b5bbccdec473fe896a2b1c9ec6e6c7e961a8ae6852d224aa9fd56f",
+    "image-eval-review/group_manifest.py": "bcc34dd1202b926f789c6c1617891fd4d3b5b92f6fa98fb8215afa0ba8da8fe5",
+    "image-eval-review/data/manifest.grouped.jsonl": "e0d6b9a61feed518f6adf7c53d870f4424d9a864b9c80331618fa00667c51e44",
+    "image-eval-review/data/exclusions.jsonl": "fb6faa3e8d3953ca9fa9f7e13f338450126335db29190a76ee1d4b5471df9fc5",
+    "image-eval-review/data/groups.json": "7ab021eb8bd33a71b0f20c7001b91d7f7e57cd44013c491d2bde43f2341ca13e",
+    "image-eval-review/data/image_fingerprints.jsonl": "8f2cc0f002864f7ca6c67c206c69416a482aa9d0701b4bc7c21a1c7a3f69185f",
+    "image-eval-review/data/near_duplicate_pairs.jsonl": "2c6540bc35182a9882db077893b0fe039e8ead685838f632ddab548b5d6499b1",
+    "image-eval-review/split_manifest.py": "423fbedf6ef98971fcefbe9d78ab735bed0a5338861c11488d23acebe6680a4a"
+  },
+  "smoke_selection": {
+    "status": "awaiting_user",
+    "sample_ids": [],
+    "selected_by": null
+  },
+  "requirements_status": "draft_pending_C02",
+  "limitation": "single subject; shared prompt templates; only four seed families",
+  "manifest_sha256": "60e2c63bf8a1b778f5e461abf510d0698a8f2686f7aeb4b106263f024e708913"
+}

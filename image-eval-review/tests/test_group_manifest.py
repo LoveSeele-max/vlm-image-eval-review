@@ -12,7 +12,7 @@ from PIL import Image, ImageDraw, ImageEnhance
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from build_manifest import unique_index
+from build_manifest import read_jsonl, unique_index
 from group_manifest import (
     DATA, ROOT, deduplicate, fingerprint, group_rows, load_inputs, review_context,
     review_targets, screen_pairs, validate_review,
@@ -22,7 +22,10 @@ from group_manifest import (
 class GroupingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.draft, cls.sources = load_inputs()
+        # Inspect the historical B02 snapshot even after B04 freezes production files.
+        # The production loader still refuses to rebuild B03 once those files exist.
+        cls.draft = read_jsonl(DATA / "manifest.draft.jsonl")
+        cls.sources = read_jsonl(DATA / "sample_sources.jsonl")
         cls.retained, cls.exclusions = deduplicate(cls.draft, cls.sources)
         cls.fingerprints, cls.pairs = screen_pairs(cls.retained, cls.sources)
         cls.context = review_context(cls.draft, cls.sources, cls.fingerprints, cls.pairs)
