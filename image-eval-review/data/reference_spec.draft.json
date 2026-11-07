@@ -1,0 +1,236 @@
+{
+  "schema_version": 1,
+  "spec_id": "subject_features_C01_draft_v1",
+  "status": "draft_pending_C04",
+  "created_on": "2026-11-07",
+  "frozen_at": null,
+  "dimension": "subject_features",
+  "authoring_basis": "固定的两张原始参考照片及用户认可的 C01 思路；不根据生成图质量、模型配置或保留集分歧制定条目。",
+  "scope": "核对当前单一主体的可见特征，不输出通用身份识别结论，不推断 LoRA 是否学会主体或训练根因。",
+  "reference_assets_text_sha256": "895c165b021e0f810a6a90fe0643a6c908bf4a05c2019b01bb4c5df0d2ff99a5",
+  "reference_images": [
+    {
+      "reference_id": "REF-MAIN",
+      "sha256": "854151e58d5d9dd03dea4aa70681f34471ce9320963df91d0a9a3474d77e987a",
+      "role": "正面斜角，提供耳部正面、发型、眼下面部标记、服装及底座证据"
+    },
+    {
+      "reference_id": "REF-SUPPLEMENT",
+      "sha256": "374875be31b62c6240088087d3ab26ed604d1580e6587877eb9a0bb1806a429f",
+      "role": "背面斜角，提供头顶耳连接、背部草帽、服装及底座证据"
+    }
+  ],
+  "provisional_status_definitions": {
+    "pass": "候选对应部位有充分可见证据符合该条规则。",
+    "fail": "候选对应部位足够清楚，有明确可见的矛盾，或能确认必需部件缺失。",
+    "unjudgeable": "条目适用，但裁切、遮挡、角度、分辨率或模糊导致证据不足。",
+    "not_applicable": "仅在任务规则明确排除该要求时使用；当前单主体的这 8 项均适用，不因遮挡或辅助项身份使用本状态。"
+  },
+  "label_vocabulary_status": "provisional_pending_C03",
+  "aggregation_status": "pending_C03",
+  "applicability": {
+    "applies_to": "all_current_samples",
+    "not_applicable_allowed": false,
+    "occlusion_label": "unjudgeable",
+    "clear_absence": "候选对应区域完整清晰且能确认目标部件不存在时使用 fail；父部件明确缺失时不能以 not_applicable 跳过其必需属性。",
+    "auxiliary": "辅助项也逐项记录 pass/fail/unjudgeable，最终聚合时不作为必需项否决；聚合实现待 C03。"
+  },
+  "general_boundaries": [
+    "允许光照、轻微色差、拍摄角度、姿态及合理透视变化；不要求像素、位置坐标和姿态完全复制。",
+    "单一颜色或某一条 pass 不足以说明整体主体一致；各条独立记录，不能互相抵消。",
+    "优先在适合该部位的参考图中取证；参考图之间只作互补，不推测两张参考图都未展示的细节。",
+    "候选不可见的部位不能从提示词、其他生成图、模型配置或人物常识补全。",
+    "使用可见视觉对应关系解释结论，不按 base/LoRA、原文件名或历史评分预先分配标签。",
+    "不在本维度评价木桌、白色转盘、室内背景、清晰度美感或通用肢体完整性；提示词与结构维度待 C02。",
+    "分辨率不足属于证据不足，不自动作为主体特征 fail；细节可判性必须在 C04 冻结前核查。",
+    "候选只出现局部明确矛盾时，不得忽略该矛盾而判 pass；部分部位可见但无法完成该条全部核对时，且没有明确矛盾，使用 unjudgeable。"
+  ],
+  "evidence_fields_proposed": [
+    "criterion_id",
+    "status",
+    "reference_id",
+    "reference_observation",
+    "candidate_region",
+    "candidate_observation",
+    "reason"
+  ],
+  "evidence_schema_status": "proposal_pending_C03_C04",
+  "criteria": [
+    {
+      "id": "subject_top_ear_geometry",
+      "name": "头顶双长耳",
+      "required": true,
+      "reference_evidence": [
+        {
+          "reference_id": "REF-MAIN",
+          "region": "头部上方与发型连接处",
+          "observation": "可见两根浅棕色、细长且尖端收窄的耳状结构，从头顶头发后方伸出。"
+        },
+        {
+          "reference_id": "REF-SUPPLEMENT",
+          "region": "后脑上方",
+          "observation": "背面角度仍可见两根长耳在头顶区域连接，提供区别于脸侧小耳的位置证据。"
+        }
+      ],
+      "pass_when": "有足够证据确认两根细长、尖端收窄的浅棕色耳状结构来自头顶或头发后方，区别于脸侧圆耳。",
+      "fail_when": "头顶区域完整清晰却没有长耳，或耳部清楚呈现为短圆耳、仅在脸侧的耳结构、其他明显不同的数量或形态。",
+      "unjudgeable_when": "头顶被裁切或遮挡，耳根、第二根耳或整体形态因角度与模糊无法核对，且没有明确反例。",
+      "allowed_variations": ["左右耳高度和倾斜略有差别", "姿态和透视导致宽度变化", "浅棕色受光照发生轻微变化"],
+      "not_required": ["复制参考耳长的精确像素比例", "保持参考照片中的画面坐标或拍摄角度"]
+    },
+    {
+      "id": "subject_dark_inner_ears",
+      "name": "内耳深浅分区",
+      "required": true,
+      "reference_evidence": [
+        {
+          "reference_id": "REF-MAIN",
+          "region": "两根长耳面向镜头的一面",
+          "observation": "浅色耳部内部存在明显更深的棕色区域，深浅区域能够区分。"
+        }
+      ],
+      "pass_when": "长耳内侧有足够可见证据显示稳定、明显的深色区域，与外围浅色区分；单纯阴影不足以证明内耳分区。",
+      "fail_when": "长耳内侧充分可见却为均一浅色或明确不存在深浅分区，或头顶完整清晰且能确认长耳本身缺失。",
+      "unjudgeable_when": "只能看到耳背、内侧被遮挡，或耳部过小、过曝、模糊，无法区分内耳色块与阴影。",
+      "allowed_variations": ["深色区域可因光照呈深棕或近黑", "不要求内耳色块面积和边缘与参考逐像素一致"],
+      "not_required": ["耳背也出现内耳色块", "精确 RGB 数值或面积阈值"]
+    },
+    {
+      "id": "subject_spiky_black_hair",
+      "name": "黑色成束尖状发型",
+      "required": true,
+      "reference_evidence": [
+        {
+          "reference_id": "REF-MAIN",
+          "region": "额头上方、头顶和头部两侧",
+          "observation": "头发整体为黑色，发束具有明显尖状轮廓，部分发束弯曲并向侧面伸展。"
+        },
+        {
+          "reference_id": "REF-SUPPLEMENT",
+          "region": "后脑与两侧发束",
+          "observation": "后脑仍有成束、尖端突出的黑色发型轮廓。"
+        }
+      ],
+      "pass_when": "可见头发整体为黑色或受光呈深色，且有明显成束的尖状或向外翘起轮廓。",
+      "fail_when": "头发区域清晰，却明确为光头、平顺无尖状发束的明显不同发型，或主体发色明确不同。",
+      "unjudgeable_when": "帽子、裁切或模糊遮住主要发型，无法确认颜色和轮廓。",
+      "allowed_variations": ["黑发受反光呈局部蓝灰色", "发束数量、刘海方向和翘起角度变化"],
+      "not_required": ["逐根发束与参考一一对应", "消除玩具材质的正常高光"]
+    },
+    {
+      "id": "subject_under_eye_scar",
+      "name": "眼下短划线状面部标记",
+      "required": true,
+      "reference_evidence": [
+        {
+          "reference_id": "REF-MAIN",
+          "region": "参考画面右侧眼下至脸颊的可见区域",
+          "observation": "可见由短线和交叉短划构成的深色疤痕样标记。"
+        }
+      ],
+      "pass_when": "对应眼下脸颊区域存在可辨识的短线交叉或缝线式疤痕样标记，足以区别于阴影、睫毛和单个色点。",
+      "fail_when": "对应眼下脸颊区域完整清晰、细节足以辨识，却明确没有该标记，或可见标记明显为其他形态或部位。",
+      "unjudgeable_when": "对应脸颊不可见、被遮挡或细节过小，或当前角度无法可靠建立面部对应关系；不能把分辨率不足解释为没有标记。",
+      "allowed_variations": ["短线长度、粗细及轻微角度变化", "拍摄角度改变画面左右位置"],
+      "not_required": ["机械要求标记始终位于候选画面右侧", "命名角色身份或用人物常识补全标记"],
+      "pre_freeze_review": "C04 前仅依据参考照片在拟用输入尺寸下核对标记可判性及面部方向说明；若需降为辅助项，记录规则版本与原因，不依据候选通过率调整。"
+    },
+    {
+      "id": "subject_red_upper_garment",
+      "name": "红色上衣",
+      "required": true,
+      "reference_evidence": [
+        {
+          "reference_id": "REF-MAIN",
+          "region": "躯干两侧和手臂连接附近",
+          "observation": "主体外穿上衣为红色；姿态使胸部及部分浅色细节同时可见。"
+        },
+        {
+          "reference_id": "REF-SUPPLEMENT",
+          "region": "背部下方和躯干侧面",
+          "observation": "草帽周围仍可见红色上衣。"
+        }
+      ],
+      "pass_when": "主体主要可见外层上衣为红色，足以确认参考中的红色上衣特征。",
+      "fail_when": "躯干外衣充分可见却为明确不同的主要颜色或服装类型，例如深色西装，或能确认没有上衣。",
+      "unjudgeable_when": "躯干被手臂、道具、裁切或模糊遮住，无法可靠判断上衣。",
+      "allowed_variations": ["上衣开合、袖部角度和轻微色差", "胸部裸露、浅色内搭或局部装饰可见"],
+      "not_required": ["复制扣子、接缝和衣褶的精确形状", "蓝色短裤也通过才允许本项通过"]
+    },
+    {
+      "id": "subject_blue_shorts",
+      "name": "蓝色短裤",
+      "required": true,
+      "reference_evidence": [
+        {
+          "reference_id": "REF-MAIN",
+          "region": "腰部下方至大腿附近",
+          "observation": "可见蓝色短裤与浅色裤脚边，裤脚以下腿部露出。"
+        },
+        {
+          "reference_id": "REF-SUPPLEMENT",
+          "region": "背部下方至腿部",
+          "observation": "补充角度可见蓝色短裤和露出的腿部。"
+        }
+      ],
+      "pass_when": "可见裤装为蓝色，且有足够证据确认短裤形态。",
+      "fail_when": "下装完整清晰，明确为其他主要颜色、长裤、裙装或其他不同下装。",
+      "unjudgeable_when": "腰腿部被裁切或遮挡，或只能看到局部蓝色色块，不能确认短裤形态。",
+      "allowed_variations": ["蓝色深浅及轻微裤脚长度变化", "浅色裤脚边的宽度和细节变化"],
+      "not_required": ["严格复制白色裤边", "红色上衣也通过才允许本项通过"]
+    },
+    {
+      "id": "subject_back_straw_hat",
+      "name": "背部草帽",
+      "required": false,
+      "reference_evidence": [
+        {
+          "reference_id": "REF-SUPPLEMENT",
+          "region": "后脑下方至上背部",
+          "observation": "主体背后有黄褐色草帽，可见宽帽檐、隆起帽冠、编织纹理和红色帽带。"
+        },
+        {
+          "reference_id": "REF-MAIN",
+          "region": "头部和躯干后方的侧缘",
+          "observation": "能见到背部帽子的一部分侧缘，但完整形态以补充参考为准。"
+        }
+      ],
+      "pass_when": "有足够可见证据确认背部的草帽形态，包括黄褐色帽体、帽檐和帽冠，并能核对红色帽带。",
+      "fail_when": "背部对应区域充分可见且明确没有草帽，或清楚呈现为其他物件或明显不同佩戴位置；帽带清晰却明确不同也属于可见矛盾。",
+      "unjudgeable_when": "只有正面或背部被遮挡，只见无法确认形态的局部黄褐色边缘，或帽体形态、背部位置和红色帽带中任一必要属性证据不足，且没有明确矛盾。",
+      "allowed_variations": ["草帽受姿态影响倾斜", "编织纹理与帽带粗细变化"],
+      "not_required": ["正面必须露出完整草帽", "复制草帽的精确纹理图案"],
+      "auxiliary_reason": "背部特征受候选视角限制较大，作为补充记录，不作为必需项否决。"
+    },
+    {
+      "id": "subject_gold_coin_base",
+      "name": "金色圆形钱币样底座",
+      "required": false,
+      "reference_evidence": [
+        {
+          "reference_id": "REF-MAIN",
+          "region": "手办双脚下方",
+          "observation": "双脚下有金色圆形底座，可见厚边及钱币样浮雕外观；其外侧另有白色拍摄转盘。"
+        },
+        {
+          "reference_id": "REF-SUPPLEMENT",
+          "region": "手办脚下及后方底座边缘",
+          "observation": "补充角度可见同一金色圆形底座及边缘细节。"
+        }
+      ],
+      "pass_when": "脚下底座可辨认为金色、圆形并具有钱币或奖章样外观；不要求具体浮雕图案相同。",
+      "fail_when": "脚下区域和完整底座清晰可见，明确为不同颜色或形状，或能确认没有底座。",
+      "unjudgeable_when": "脚下被裁切、遮挡，或只能看到不足以确认颜色、圆形及钱币样形态的局部。",
+      "allowed_variations": ["金色受光照呈黄色或偏棕", "透视使圆形表现为椭圆", "具体浮雕、字样与边缘纹理变化"],
+      "not_required": ["复制参考拍摄用的白色转盘", "匹配钱币上的精确文字或浮雕"],
+      "auxiliary_reason": "底座可为补充外观证据，但单独相似不能证明主体一致，因此不作为必需项否决。"
+    }
+  ],
+  "pre_freeze_checks": [
+    "C02 补充独立的结构完整性和提示词要求规范，不将本文件直接当作提示词要求目录。",
+    "C03 统一状态词、证据字段、辅助项处理和完整/不完整结果的聚合顺序。",
+    "C04 依据拟用整图输入尺寸核查参考图可判性，重点检查疤痕、内耳及草帽细节，记录处理方案；D04 再验证实际请求与冻结方案一致。",
+    "正式冻结前记录条目和必需性变化、原因及版本；不根据保留集分歧或候选通过率反向制定标准。",
+    "C04 保存正式 reference_spec.json 和规则版本；本草稿不包含任何生成图标签或 VLM 评分。"
+  ]
+}
