@@ -1,0 +1,2 @@
+# B01 image inspection; the API configuration window uses the standard library.
+Pillow==12.2.0

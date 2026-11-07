@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-07T14:55:29+08:00",
+  "python_version": "3.13.7",
+  "pillow_version": "12.2.0",
+  "source_manifest": "A03_候选图片来源清单.jsonl",
+  "source_manifest_sha256": "a1d1793a47de318cfa3656e27d2cbe9e04000567c1e57d8a0768dda58c8ad1a2",
+  "candidate_count": 48,
+  "reference_count": 2,
+  "passed_count": 50,
+  "failed_count": 0,
+  "batch_counts": {
+    "t05_v1_20261001_175923": 24,
+    "ear_prompt_diagnostic_20261004_111909": 16,
+    "trigger_diagnostic_20261001_222455": 8
+  },
+  "candidate_dimensions": {
+    "512x512": 48
+  },
+  "reference_dimensions": {
+    "3072x4096": 2
+  },
+  "format_counts": {
+    "PNG": 48,
+    "JPEG": 2
+  },
+  "candidate_byte_unique_count": 40,
+  "candidate_byte_duplicate_groups": [
+    [
+      "A03-009",
+      "A03-025"
+    ],
+    [
+      "A03-010",
+      "A03-026"
+    ],
+    [
+      "A03-011",
+      "A03-027"
+    ],
+    [
+      "A03-012",
+      "A03-028"
+    ],
+    [
+      "A03-021",
+      "A03-033"
+    ],
+    [
+      "A03-022",
+      "A03-034"
+    ],
+    [
+      "A03-023",
+      "A03-035"
+    ],
+    [
+      "A03-024",
+      "A03-036"
+    ]
+  ],
+  "failed_ids": [],
+  "scope": "file_integrity_only; no quality judgment, exclusion, split or API calls"
+}
