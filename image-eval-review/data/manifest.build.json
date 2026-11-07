@@ -1,0 +1,36 @@
+{
+  "stage": "B02_draft",
+  "schema_version": 1,
+  "sample_count": 48,
+  "reference_count": 2,
+  "unique_prompt_count": 5,
+  "generation_condition_group_count": 20,
+  "byte_unique_candidate_count": 40,
+  "duplicate_candidate_count": 8,
+  "requirement_count_distribution": {
+    "2": 8,
+    "3": 16,
+    "12": 16,
+    "14": 8
+  },
+  "input_hash_policy": "UTF-8 text with LF newlines; image hashes use raw bytes",
+  "inputs_sha256": {
+    "A03_候选图片来源清单.jsonl": "a1d1793a47de318cfa3656e27d2cbe9e04000567c1e57d8a0768dda58c8ad1a2",
+    "B01_图片检查清单.jsonl": "49eb8fc6a104a1738458b791fea96ea887e4f0a0af31e6db66be18ad2fddfcee",
+    "image-eval-review/data/prompt_requirements.json": "e39c6bc7806899685929ce4b20d09f60cf13a1e7d04d147f1a105b4ac71e74ca",
+    "image-eval-review/data/generation_config.json": "67f547cfaa345b3d639b955b5171b73cbd35c2266450adfc68979c637174e228",
+    "image-eval-review/build_manifest.py": "bd74c94da2bea6ab72d2af609390caa1fda506f698d2e282aa064f9e6cb1f808"
+  },
+  "selection_status": "pending_B03",
+  "grouping_status": "pending_B03",
+  "split_status": "pending_B04",
+  "requirements_status": "draft_pending_C02",
+  "annotation_view_fields": [
+    "sample_id",
+    "candidate_asset_id",
+    "reference_ids",
+    "prompt",
+    "requirements",
+    "requirements_status"
+  ]
+}

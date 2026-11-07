@@ -1,0 +1,18 @@
+[
+  {
+    "reference_id": "REF-MAIN",
+    "role": "reference_main",
+    "source_path": "E:/cstudy/AIGC/flux/flux/refer/IMG_20261001_164239.jpg",
+    "sha256": "854151e58d5d9dd03dea4aa70681f34471ce9320963df91d0a9a3474d77e987a",
+    "width": 3072,
+    "height": 4096
+  },
+  {
+    "reference_id": "REF-SUPPLEMENT",
+    "role": "reference_supplement",
+    "source_path": "E:/cstudy/AIGC/flux/flux/refer/IMG_20261001_164251.jpg",
+    "sha256": "374875be31b62c6240088087d3ab26ed604d1580e6587877eb9a0bb1806a429f",
+    "width": 3072,
+    "height": 4096
+  }
+]

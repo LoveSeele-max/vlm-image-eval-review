@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "profile_id": "historical_flux_klein_checkpoint240",
+  "evidence_status": "historical_commands_only",
+  "evidence_document": "../../A03_候选图片提示词与来源核对.md",
+  "historical_command_settings": {
+    "base_model_path": "/home/user/aigc-lab/models/FLUX.2-klein-base-4B",
+    "lora_checkpoint_path": "/home/user/aigc-lab/runs/figurine_base_cropped_320steps_v1/checkpoint-240",
+    "lora_weight_file": "pytorch_lora_weights.safetensors",
+    "lora_scale": 0.75,
+    "width": 512,
+    "height": 512,
+    "num_inference_steps": 50,
+    "guidance_scale": 4.0,
+    "dtype": "torch.bfloat16",
+    "generator_device": "cpu",
+    "negative_prompt_argument": "not_supplied",
+    "model_group_behavior": {"base": "no_lora_loaded", "lora": "load_checkpoint240"}
+  },
+  "unverified_runtime": {
+    "python_version": null,
+    "pytorch_version": null,
+    "diffusers_version": null,
+    "cuda_version": null,
+    "scheduler": null,
+    "base_weights_sha256": null,
+    "lora_weights_sha256": null
+  },
+  "note": "本文件为内部配置，不能进入人工初标视图。历史命令参数不等于服务器运行时已独立验证。"
+}

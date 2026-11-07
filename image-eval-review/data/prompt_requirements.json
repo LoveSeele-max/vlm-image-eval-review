@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "status": "draft_pending_C02",
+  "note": "仅摘录原始提示词的明确视觉要求；zqv 为触发词，不单独转成可见属性。通过标准由 C02-C04 冻结，不导入历史评分。",
+  "prompts": [
+    {
+      "aliases": ["P0"],
+      "prompt": "a photo of a figurine on a wooden table",
+      "requirement_ids": ["photo_style", "figurine", "wooden_table"],
+      "non_visual_tokens": []
+    },
+    {
+      "aliases": ["P1"],
+      "prompt": "a photo of a zqv figurine on a wooden table",
+      "requirement_ids": ["photo_style", "figurine", "wooden_table"],
+      "non_visual_tokens": ["zqv"]
+    },
+    {
+      "aliases": ["P2", "D1_original"],
+      "prompt": "a photo of a zqv figurine on a wooden table, a small collectible toy with spiky black hair, two long upright tan ears, natural light tan skin tone, large anime eyes, red jacket, blue shorts, sandals, and a round gold display base",
+      "requirement_ids": ["photo_style", "figurine", "wooden_table", "collectible_toy", "black_spiky_hair", "long_upright_tan_ears", "light_tan_skin", "large_anime_eyes", "red_jacket", "blue_shorts", "sandals", "round_gold_base"],
+      "non_visual_tokens": ["zqv"]
+    },
+    {
+      "aliases": ["D2_explicit_ears"],
+      "prompt": "a photo of a zqv figurine on a wooden table, a small collectible toy with spiky black hair, two tall tan rabbit-like ears rising from the top of the head behind the black hair, with distinct dark inner ear panels, separate from the small rounded ears on the sides of the face, natural light tan skin tone, large anime eyes, red jacket, blue shorts, sandals, and a round gold display base",
+      "requirement_ids": ["photo_style", "figurine", "wooden_table", "collectible_toy", "black_spiky_hair", "rabbit_ear_placement", "dark_inner_ears", "separate_face_ears", "light_tan_skin", "large_anime_eyes", "red_jacket", "blue_shorts", "sandals", "round_gold_base"],
+      "non_visual_tokens": ["zqv"]
+    },
+    {
+      "aliases": ["TRIGGER_ORIGINAL"],
+      "prompt": "a photo of zqv figurine",
+      "requirement_ids": ["photo_style", "figurine"],
+      "non_visual_tokens": ["zqv"]
+    }
+  ],
+  "requirements": {
+    "photo_style": {"description": "以照片风格呈现。", "source_quote": "a photo"},
+    "figurine": {"description": "画面中有手办。", "source_quote": "figurine"},
+    "wooden_table": {"description": "手办放置在木桌上。", "source_quote": "on a wooden table"},
+    "collectible_toy": {"description": "呈现小型收藏玩具的外观；不从图像推断实际物理尺寸。", "source_quote": "a small collectible toy"},
+    "black_spiky_hair": {"description": "黑色、刺状的头发。", "source_quote": "spiky black hair"},
+    "long_upright_tan_ears": {"description": "两只长而直立的浅棕色耳朵。", "source_quote": "two long upright tan ears"},
+    "rabbit_ear_placement": {"description": "两只高的浅棕色兔耳，从头顶黑发后方伸出。", "source_quote": "two tall tan rabbit-like ears rising from the top of the head behind the black hair"},
+    "dark_inner_ears": {"description": "耳朵内部有明确的深色区域。", "source_quote": "distinct dark inner ear panels"},
+    "separate_face_ears": {"description": "头顶兔耳与脸部两侧的小圆耳分开。", "source_quote": "separate from the small rounded ears on the sides of the face"},
+    "light_tan_skin": {"description": "自然的浅棕肤色。", "source_quote": "natural light tan skin tone"},
+    "large_anime_eyes": {"description": "大而具有动漫风格的眼睛。", "source_quote": "large anime eyes"},
+    "red_jacket": {"description": "红色外套。", "source_quote": "red jacket"},
+    "blue_shorts": {"description": "蓝色短裤。", "source_quote": "blue shorts"},
+    "sandals": {"description": "凉鞋。", "source_quote": "sandals"},
+    "round_gold_base": {"description": "圆形金色展示底座。", "source_quote": "a round gold display base"}
+  }
+}
