@@ -1,4 +1,5 @@
 import json
+import base64
 import os
 import queue
 import sys
@@ -16,6 +17,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from api_connection import CLIENT_USER_AGENT, ConnectionTestError, normalize_base_url, test_connection
 from configure_api import SettingsWindow
+from capability_probe import TEST_TYPE, create_challenge, test_capabilities
 
 SECRET = "fake-key-for-local-tests"
 
@@ -268,6 +270,148 @@ class SetupTests(unittest.TestCase):
             self.assertFalse(json.loads(receipt)["success"])
             self.assertNotIn(SECRET, receipt)
             self.assertFalse(app.test_button.instate(["disabled"]))
+            app.close()
+
+    def capability_answer(self, challenge):
+        return {"images": [
+            {key: image[key] for key in ("image_id", "color", "shape", "count")}
+            for image in challenge["images"]
+        ]}
+
+    def set_capability_response(self, answer):
+        self.payload["output"][1]["content"][0]["text"] = (
+            answer if isinstance(answer, str) else json.dumps(answer))
+        self.set_payload(self.payload)
+
+    def test_three_images_strict_schema_and_validated_receipt(self):
+        challenge = create_challenge()
+        answer = self.capability_answer(challenge)
+        self.set_capability_response(answer)
+        receipt = test_capabilities(self.base_url, "test-model", challenge)
+        request = self.server.requests.get_nowait()
+        body = request["body"]
+        self.assertEqual(request["user_agent"], CLIENT_USER_AGENT)
+        self.assertEqual(request["path"], "/v1/responses")
+        self.assertEqual(request["authorization"], "Bearer " + SECRET)
+        self.assertTrue(body["text"]["format"]["strict"])
+        self.assertEqual(body["text"]["format"]["type"], "json_schema")
+        self.assertFalse(body["text"]["format"]["schema"]["additionalProperties"])
+        content = body["input"][0]["content"]
+        self.assertEqual(len(content), 4)
+        self.assertEqual(content[0]["type"], "input_text")
+        self.assertNotIn(json.dumps(answer), content[0]["text"])
+        for image, block in zip(challenge["images"], content[1:]):
+            self.assertEqual(block["type"], "input_image")
+            self.assertEqual(block["detail"], "low")
+            data_url = block["image_url"]
+            self.assertTrue(data_url.startswith("data:image/png;base64,"))
+            self.assertEqual(data_url.split(",", 1)[1], image["png_base64"])
+            self.assertTrue(base64.b64decode(data_url.split(",", 1)[1]).startswith(b"\x89PNG"))
+        self.assertEqual(receipt["test_type"], TEST_TYPE)
+        self.assertTrue(receipt["request_completed"])
+        self.assertTrue(receipt["schema_valid"])
+        self.assertTrue(receipt["visual_match"])
+        self.assertTrue(receipt["success"])
+        self.assertEqual(receipt["schema_enforcement"], "not_proven_by_smoke_test")
+        self.assertEqual(receipt["usage"]["total_tokens"], 29)
+        self.assertEqual(receipt["expected"], answer["images"])
+        self.assertNotIn("png_base64", json.dumps(receipt))
+        self.assertNotIn(SECRET, json.dumps(receipt))
+        self.assertTrue(self.server.requests.empty())
+
+    def test_valid_json_wrong_color_count_order_and_duplicate_id_fail_visual_check(self):
+        challenge = create_challenge()
+        for failure in ("color", "count", "order", "duplicate_id"):
+            answer = self.capability_answer(challenge)
+            if failure == "color":
+                answer["images"][0]["color"] = (
+                    "red" if answer["images"][0]["color"] != "red" else "blue")
+            elif failure == "count":
+                answer["images"][0]["count"] = answer["images"][0]["count"] % 3 + 1
+            elif failure == "order":
+                answer["images"].reverse()
+            else:
+                answer["images"][1]["image_id"] = 1
+            self.set_capability_response(answer)
+            with self.subTest(failure=failure):
+                receipt = test_capabilities(self.base_url, "test-model", challenge)
+                self.assertTrue(receipt["schema_valid"])
+                self.assertFalse(receipt["visual_match"])
+                self.assertFalse(receipt["success"])
+                self.assertTrue(any(not item["match"] for item in receipt["checks"]))
+
+    def test_malformed_json_preserves_usage_without_claiming_vision_failure(self):
+        challenge = create_challenge()
+        self.set_capability_response("```json\n{}\n```")
+        receipt = test_capabilities(self.base_url, "test-model", challenge)
+        self.assertTrue(receipt["request_completed"])
+        self.assertFalse(receipt["schema_valid"])
+        self.assertIsNone(receipt["visual_match"])
+        self.assertFalse(receipt["success"])
+        self.assertEqual(receipt["usage"]["total_tokens"], 29)
+        self.assertEqual(self.server.requests.qsize(), 1)
+
+    def test_refusal_is_not_treated_as_an_answer(self):
+        self.payload["output"][1]["content"] = [{"type": "refusal", "refusal": SECRET}]
+        self.set_payload(self.payload)
+        with self.assertRaisesRegex(ConnectionTestError, "拒绝") as context:
+            test_capabilities(self.base_url, "test-model", create_challenge())
+        self.assertNotIn(SECRET, str(context.exception))
+        self.assertEqual(self.server.requests.qsize(), 1)
+
+    def test_gui_capability_previews_receipt_and_no_duplicate_requests(self):
+        challenge = create_challenge()
+        self.set_capability_response(self.capability_answer(challenge))
+        with tempfile.TemporaryDirectory() as folder:
+            root, app = self.make_window(folder)
+            with patch("configure_api.create_challenge", return_value=challenge):
+                app.start_capability_test()
+                app.start_capability_test()
+                app.start_test()
+            self.assertEqual(len(app.previews), 3)
+            self.assertTrue(all(image.width() == 128 for image in app.previews))
+            self.assertTrue(app.test_button.instate(["disabled"]))
+            self.assertTrue(app.capability_button.instate(["disabled"]))
+            self.finish_window_request(root, app)
+            self.assertEqual(app.state.get(), "三图识别与 JSON 格式检查通过")
+            self.assertIn("JSON 本地校验：通过", app.output.get("1.0", "end"))
+            self.assertIn("图 3：通过", app.output.get("1.0", "end"))
+            self.assertFalse(app.capability_button.instate(["disabled"]))
+            receipt = app.capability_receipt_path.read_text(encoding="utf-8")
+            self.assertNotIn(SECRET, receipt)
+            self.assertTrue(json.loads(receipt)["success"])
+            self.assertFalse(app.receipt_path.exists())
+            self.assertEqual(self.server.requests.qsize(), 1)
+            app.close()
+
+    def test_gui_capability_format_and_http_failure_preserve_text_receipt(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root, app = self.make_window(folder)
+            app.start_test()
+            self.finish_window_request(root, app)
+            text_receipt = app.receipt_path.read_bytes()
+            self.set_capability_response('{"images":[]}')
+            app.start_capability_test()
+            self.finish_window_request(root, app)
+            self.assertEqual(app.state.get(), "请求已完成，但能力检查未通过")
+            self.assertIn("JSON 本地校验：未通过", app.output.get("1.0", "end"))
+            self.assertIn("三图识别核对：未执行", app.output.get("1.0", "end"))
+            self.assertFalse(json.loads(app.capability_receipt_path.read_text(encoding="utf-8"))["success"])
+            self.server.response_code = 400
+            self.set_payload({"error": {"message": "unsupported json_schema " + SECRET}})
+            app.start_capability_test()
+            self.finish_window_request(root, app)
+            self.assertEqual(app.state.get(), "多图＋JSON 测试未完成")
+            self.assertIn("unsupported json_schema", app.output.get("1.0", "end"))
+            failure_text = app.capability_receipt_path.read_text(encoding="utf-8")
+            self.assertNotIn(SECRET, failure_text)
+            failure = json.loads(failure_text)
+            self.assertFalse(failure["request_completed"])
+            self.assertIsNone(failure["schema_valid"])
+            self.assertIsNone(failure["visual_match"])
+            self.assertEqual(app.receipt_path.read_bytes(), text_receipt)
+            self.assertFalse(app.capability_button.instate(["disabled"]))
+            self.assertEqual(self.server.requests.qsize(), 3)
             app.close()
 
 

@@ -1,4 +1,4 @@
-"""A single text probe for a Responses-compatible endpoint."""
+"""Small probes for a Responses-compatible endpoint."""
 
 import json
 import os
@@ -118,6 +118,11 @@ def explain_http_error(error, api_key):
 
 
 def test_connection(base_url, model, timeout=120):
+    return send_probe(base_url, model, "只回复：连接成功", timeout=timeout)
+
+
+def send_probe(base_url, model, input_content, *, timeout=120,
+               test_type="text_connection_only", text_format=None, text_limit=2000):
     settings = validate_settings(base_url, model)
     api_key = os.environ.get("VLM_API_KEY", "").strip()
     if not api_key:
@@ -126,10 +131,12 @@ def test_connection(base_url, model, timeout=120):
         raise ValueError("API Key 中包含空格或换行，请检查粘贴内容。")
     body = {
         "model": settings["model"],
-        "input": "只回复：连接成功",
+        "input": input_content,
         "max_output_tokens": 1024,
         "stream": False,
     }
+    if text_format is not None:
+        body["text"] = {"format": text_format}
     request = Request(
         settings["base_url"] + "/responses",
         data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
@@ -172,6 +179,8 @@ def test_connection(base_url, model, timeout=120):
         if not isinstance(content, list):
             continue
         for block in content:
+            if isinstance(block, dict) and block.get("type") == "refusal":
+                raise ConnectionTestError("接口拒绝了本次请求，能力尚未验证。")
             if (
                 isinstance(block, dict)
                 and block.get("type") == "output_text"
@@ -187,13 +196,14 @@ def test_connection(base_url, model, timeout=120):
     details = details if isinstance(details, dict) else {}
     # Keep a small receipt, never the raw payload or request headers.
     receipt = {
-        "test_type": "text_connection_only",
+        "test_type": test_type,
         "success": True,
         "tested_at": datetime.now().astimezone().isoformat(timespec="seconds"),
         "requested_model": settings["model"],
         "returned_model": payload.get("model") if isinstance(payload.get("model"), str) else None,
         "provider_status": payload.get("status"),
-        "text": text[:2000],
+        "text": text[:text_limit],
+        "text_truncated": len(text) > text_limit,
         "elapsed_seconds": round(time.monotonic() - started, 2),
         "usage": {
             "input_tokens": integer_or_none(usage.get("input_tokens")),
