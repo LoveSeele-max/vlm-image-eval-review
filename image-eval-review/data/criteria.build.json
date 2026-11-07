@@ -1,0 +1,18 @@
+{
+  "stage": "C02_draft",
+  "sample_count": 40,
+  "prompt_criterion_count": 240,
+  "structure_assignment_count": 160,
+  "excluded_prompt_assignment_count": 32,
+  "inputs_sha256": {
+    "image-eval-review/data/manifest.jsonl": "60e2c63bf8a1b778f5e461abf510d0698a8f2686f7aeb4b106263f024e708913",
+    "image-eval-review/data/prompt_requirements.json": "e39c6bc7806899685929ce4b20d09f60cf13a1e7d04d147f1a105b4ac71e74ca",
+    "image-eval-review/data/evaluation_spec.draft.json": "c7e54ea5912419845106aca29ecb977dd096a8e53d3a78e092fe5609a278b41c",
+    "image-eval-review/build_criteria.py": "e160526219c79f63122bc17c1fe4b28f267261980b9266d7387615feaa3564f4"
+  },
+  "outputs_sha256": {
+    "sample_criteria.draft.jsonl": "4017c992d16c6fb1b16758dba687b537b2380535a2783ea4eb11d400b9a3ab93"
+  },
+  "status": "draft_pending_C03_C04",
+  "api_calls": 0
+}
