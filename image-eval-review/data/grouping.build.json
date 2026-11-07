@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "stage": "B03_grouped",
+  "policy": {
+    "version": "B03_v1",
+    "canonical": "prefer no duplicate pointer, then ascending A03 record ID",
+    "grouping": "join same seed families, same condition groups, and reviewed same_group pairs",
+    "fingerprints": "EXIF transpose; RGB; LANCZOS; dHash64 left>right; aHash64 pixel>=mean",
+    "rgb_mae": "mean absolute byte difference of RGB 32x32, rounded to 3 decimals",
+    "screen": {
+      "dhash_max": 10,
+      "ahash_max": 4,
+      "ahash_rgb_mae_max": 30,
+      "rgb_mae_max": 18
+    },
+    "cross_seed_review": "union of flagged pairs, top 5 dHash pairs, top 5 RGB MAE pairs",
+    "near_duplicate_action": "review and group only; exclude only raw SHA-256 duplicates"
+  },
+  "candidate_count": 48,
+  "included_count": 40,
+  "excluded_count": 8,
+  "group_count": 4,
+  "group_sizes": [
+    10,
+    10,
+    10,
+    10
+  ],
+  "pair_count": 780,
+  "screen_flag_count": 14,
+  "cross_seed_flag_count": 2,
+  "cross_seed_review_count": 9,
+  "confirmed_cross_seed_merge_count": 0,
+  "pillow_version": "12.2.0",
+  "review_context_sha256": "35e0dc25645db59b601001abc83a001e563a1c1e1a7b0ef47b83412b94b22e40",
+  "inputs_sha256": {
+    "image-eval-review/data/manifest.draft.jsonl": "d69160737cd575e6093e56e8387d80b12c79eafb3825b4d5ec200e2cbad6f9c4",
+    "image-eval-review/data/sample_sources.jsonl": "c07f30d36fe0756cd97e60fab78986baa480fdcc9acdac721bc92c5d6cd8a745",
+    "image-eval-review/data/reference_assets.json": "895c165b021e0f810a6a90fe0643a6c908bf4a05c2019b01bb4c5df0d2ff99a5",
+    "image-eval-review/data/manifest.build.json": "975c92c2bd0ac29ca5b40a2026e975fa18ca1a90bafc1779490c733553c4dfae",
+    "image-eval-review/data/near_duplicate_review.json": "fe07edc037b5bbccdec473fe896a2b1c9ec6e6c7e961a8ae6852d224aa9fd56f",
+    "image-eval-review/group_manifest.py": "bcc34dd1202b926f789c6c1617891fd4d3b5b92f6fa98fb8215afa0ba8da8fe5"
+  },
+  "outputs_sha256": {
+    "manifest.grouped.jsonl": "e0d6b9a61feed518f6adf7c53d870f4424d9a864b9c80331618fa00667c51e44",
+    "exclusions.jsonl": "fb6faa3e8d3953ca9fa9f7e13f338450126335db29190a76ee1d4b5471df9fc5",
+    "groups.json": "7ab021eb8bd33a71b0f20c7001b91d7f7e57cd44013c491d2bde43f2341ca13e",
+    "image_fingerprints.jsonl": "8f2cc0f002864f7ca6c67c206c69416a482aa9d0701b4bc7c21a1c7a3f69185f",
+    "near_duplicate_pairs.jsonl": "2c6540bc35182a9882db077893b0fe039e8ead685838f632ddab548b5d6499b1"
+  },
+  "split_status": "pending_B04",
+  "requirements_status": "draft_pending_C02",
+  "source_images_modified": false,
+  "api_calls": 0
+}

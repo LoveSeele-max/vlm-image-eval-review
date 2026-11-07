@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "stage": "B03_grouped",
+  "policy": {
+    "version": "B03_v1",
+    "canonical": "prefer no duplicate pointer, then ascending A03 record ID",
+    "grouping": "join same seed families, same condition groups, and reviewed same_group pairs",
+    "fingerprints": "EXIF transpose; RGB; LANCZOS; dHash64 left>right; aHash64 pixel>=mean",
+    "rgb_mae": "mean absolute byte difference of RGB 32x32, rounded to 3 decimals",
+    "screen": {
+      "dhash_max": 10,
+      "ahash_max": 4,
+      "ahash_rgb_mae_max": 30,
+      "rgb_mae_max": 18
+    },
+    "cross_seed_review": "union of flagged pairs, top 5 dHash pairs, top 5 RGB MAE pairs",
+    "near_duplicate_action": "review and group only; exclude only raw SHA-256 duplicates"
+  },
+  "groups": [
+    {
+      "group_id": "group_001",
+      "sample_ids": [
+        "sample_001",
+        "sample_002",
+        "sample_004",
+        "sample_011",
+        "sample_013",
+        "sample_015",
+        "sample_017",
+        "sample_018",
+        "sample_030",
+        "sample_046"
+      ],
+      "sample_count": 10,
+      "seeds": [
+        456
+      ],
+      "generation_condition_group_ids": [
+        "condition_003",
+        "condition_007",
+        "condition_011",
+        "condition_015",
+        "condition_019"
+      ],
+      "model_group_counts": {
+        "base": 5,
+        "lora": 5
+      }
+    },
+    {
+      "group_id": "group_002",
+      "sample_ids": [
+        "sample_003",
+        "sample_012",
+        "sample_023",
+        "sample_024",
+        "sample_027",
+        "sample_039",
+        "sample_041",
+        "sample_044",
+        "sample_045",
+        "sample_048"
+      ],
+      "sample_count": 10,
+      "seeds": [
+        42
+      ],
+      "generation_condition_group_ids": [
+        "condition_001",
+        "condition_005",
+        "condition_009",
+        "condition_013",
+        "condition_017"
+      ],
+      "model_group_counts": {
+        "base": 5,
+        "lora": 5
+      }
+    },
+    {
+      "group_id": "group_003",
+      "sample_ids": [
+        "sample_007",
+        "sample_009",
+        "sample_019",
+        "sample_021",
+        "sample_025",
+        "sample_028",
+        "sample_032",
+        "sample_034",
+        "sample_035",
+        "sample_047"
+      ],
+      "sample_count": 10,
+      "seeds": [
+        123
+      ],
+      "generation_condition_group_ids": [
+        "condition_002",
+        "condition_006",
+        "condition_010",
+        "condition_014",
+        "condition_018"
+      ],
+      "model_group_counts": {
+        "base": 5,
+        "lora": 5
+      }
+    },
+    {
+      "group_id": "group_004",
+      "sample_ids": [
+        "sample_008",
+        "sample_010",
+        "sample_014",
+        "sample_016",
+        "sample_020",
+        "sample_026",
+        "sample_029",
+        "sample_036",
+        "sample_038",
+        "sample_042"
+      ],
+      "sample_count": 10,
+      "seeds": [
+        789
+      ],
+      "generation_condition_group_ids": [
+        "condition_004",
+        "condition_008",
+        "condition_012",
+        "condition_016",
+        "condition_020"
+      ],
+      "model_group_counts": {
+        "base": 5,
+        "lora": 5
+      }
+    }
+  ],
+  "split_status": "pending_B04",
+  "limitation": "shared prompts across seed groups; no unseen-prompt generalization claim"
+}

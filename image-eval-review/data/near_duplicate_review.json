@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "context_sha256": "35e0dc25645db59b601001abc83a001e563a1c1e1a7b0ef47b83412b94b22e40",
+  "reviewer": "Codex local visual inspection",
+  "scope": "仅用于数据去重分组；不是作者人工初标，也不是 VLM 质量评分。",
+  "decisions": [
+    {
+      "left": "sample_001",
+      "right": "sample_014",
+      "left_sha256": "dde910de3e5c3e01d616d2b9d3a12a078c6af1104dc6a6a1ba418c375289889a",
+      "right_sha256": "ecec029d5c76f9500c15d8f1bf9b614f20340aebd757dfa4760cb306be38cfe9",
+      "decision": "distinct_images",
+      "reason": "服装、桌面背景、耳部结构和姿态明显不同。"
+    },
+    {
+      "left": "sample_003",
+      "right": "sample_034",
+      "left_sha256": "b28f15f467b01ac125c66e9d2d5907d90195f227d2b098abfb356e182f874609",
+      "right_sha256": "87ff49ae792d85aa06cdce1261e0141f00edcc592af9ccaf0992f18fa53b67e2",
+      "decision": "distinct_images",
+      "reason": "头发轮廓、耳部形状与位置、脸部比例及桌面透视不同。"
+    },
+    {
+      "left": "sample_004",
+      "right": "sample_025",
+      "left_sha256": "009031311dc10365a8a4e4269f4513048e0e14a390af67d1c4d8c16d9466fa5f",
+      "right_sha256": "c14b97a46dbeb0b385d8e53bd0c37e1a0e63947ccedddc4b780936e312c21186",
+      "decision": "distinct_images",
+      "reason": "头发轮廓、耳朵角度和头部比例不同，背景物体及桌面场景不同。"
+    },
+    {
+      "left": "sample_008",
+      "right": "sample_017",
+      "left_sha256": "f777ac6fc65f01abb1274f134d716dd36c52d53b6a7fd2bc34206586cca3e5f6",
+      "right_sha256": "48a34bfa3fc6dde88681bb7a163e1cae1da9c4c1cd799f6f767e060dc4a650f1",
+      "decision": "distinct_images",
+      "reason": "耳朵与头部几何、手脚姿态、桌面纹理和背景透视不同。"
+    },
+    {
+      "left": "sample_008",
+      "right": "sample_046",
+      "left_sha256": "f777ac6fc65f01abb1274f134d716dd36c52d53b6a7fd2bc34206586cca3e5f6",
+      "right_sha256": "dc3ab4495dfd15e4713994176e4e67025cfb9da0941693ec1df92aa220d49c72",
+      "decision": "distinct_images",
+      "reason": "前者具有大块深色内耳，后者耳形及内耳结构不同；外套开口、姿态和桌面不同。"
+    },
+    {
+      "left": "sample_017",
+      "right": "sample_028",
+      "left_sha256": "48a34bfa3fc6dde88681bb7a163e1cae1da9c4c1cd799f6f767e060dc4a650f1",
+      "right_sha256": "821f70d9515ede9e90f5f8161d2adc0ef7d903456805b99f9031bcea3c71b77e",
+      "decision": "distinct_images",
+      "reason": "视线和头部转向、耳轴、发型布局及桌面底座透视不同。"
+    },
+    {
+      "left": "sample_017",
+      "right": "sample_035",
+      "left_sha256": "48a34bfa3fc6dde88681bb7a163e1cae1da9c4c1cd799f6f767e060dc4a650f1",
+      "right_sha256": "7af02839eee756e6b5befd08f8df1a2ed5c92a9c6c97c241885466dee8772ef6",
+      "decision": "distinct_images",
+      "reason": "宽深色内耳与细长尖耳不同，外套开口、手脚姿态不同。"
+    },
+    {
+      "left": "sample_017",
+      "right": "sample_044",
+      "left_sha256": "48a34bfa3fc6dde88681bb7a163e1cae1da9c4c1cd799f6f767e060dc4a650f1",
+      "right_sha256": "2c6861368fa3d60a7e4417e835662c4008dd9caea4fb36525ec4b764de0b7169",
+      "decision": "distinct_images",
+      "reason": "头部和视线方向、耳朵与头发几何、外套和桌面透视不同。"
+    },
+    {
+      "left": "sample_023",
+      "right": "sample_034",
+      "left_sha256": "132f70dd4e6b09baff32911645d9c6e53d890ddda9b7e47d92895642d15b987d",
+      "right_sha256": "87ff49ae792d85aa06cdce1261e0141f00edcc592af9ccaf0992f18fa53b67e2",
+      "decision": "distinct_images",
+      "reason": "内耳形状、发型轮廓、头身比例及视角背景不同。"
+    }
+  ],
+  "reviewed_on": "2026-11-07",
+  "limitation": "启发式筛查与局部复核不保证发现所有近重复；同主体语义相似不等于同一画面。"
+}
