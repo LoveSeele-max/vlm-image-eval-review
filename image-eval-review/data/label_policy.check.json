@@ -1,0 +1,24 @@
+{
+  "stage": "C03",
+  "policy_id": "labels_aggregation_C03_v1",
+  "status": "approved_pending_C04",
+  "sample_count": 40,
+  "label_assignment_count": 720,
+  "required_assignment_count": 640,
+  "auxiliary_assignment_count": 80,
+  "smoke_label_counts": {
+    "sample_020": 14,
+    "sample_029": 23,
+    "sample_042": 25
+  },
+  "inputs_sha256": {
+    "image-eval-review/data/reference_spec.draft.json": "ad88244cbd55d01db9611817a29bf16078b8d31902e7ed0164b5358b5f27abc7",
+    "image-eval-review/data/evaluation_spec.draft.json": "c7e54ea5912419845106aca29ecb977dd096a8e53d3a78e092fe5609a278b41c",
+    "image-eval-review/data/sample_criteria.draft.jsonl": "4017c992d16c6fb1b16758dba687b537b2380535a2783ea4eb11d400b9a3ab93",
+    "image-eval-review/data/manifest.jsonl": "60e2c63bf8a1b778f5e461abf510d0698a8f2686f7aeb4b106263f024e708913",
+    "image-eval-review/data/label_policy.draft.json": "413abbf98edff66b592e203a921b2836af84f3270cc3ba6cc17601faa5792609",
+    "image-eval-review/evaluate_results.py": "d200a212bfe612d64b37c94becb5f8cf9d5df9d7303cdedbed3f0cb50a03d837"
+  },
+  "checks": "40 条样本元数据及必需性核验；未产生图片标签",
+  "api_calls": 0
+}
