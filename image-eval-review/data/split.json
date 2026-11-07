@@ -100,9 +100,16 @@
     "image-eval-review/split_manifest.py": "423fbedf6ef98971fcefbe9d78ab735bed0a5338861c11488d23acebe6680a4a"
   },
   "smoke_selection": {
-    "status": "awaiting_user",
-    "sample_ids": [],
-    "selected_by": null
+    "status": "selected",
+    "sample_ids": [
+      "sample_020",
+      "sample_029",
+      "sample_042"
+    ],
+    "selected_by": "user",
+    "confirmed_at": "2026-11-07T16:15:21+08:00",
+    "selection_method": "assistant_recommended_user_confirmed",
+    "confirmation": "那挺好的，你就这三张图了"
   },
   "requirements_status": "draft_pending_C02",
   "limitation": "single subject; shared prompt templates; only four seed families",
