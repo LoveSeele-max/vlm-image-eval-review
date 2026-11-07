@@ -1,0 +1,77 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "sample_id",
+    "labels"
+  ],
+  "properties": {
+    "sample_id": {
+      "type": "string"
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "criterion_id",
+          "status",
+          "candidate_region",
+          "candidate_observation",
+          "reason"
+        ],
+        "properties": {
+          "criterion_id": {
+            "type": "string",
+            "enum": [
+              "black_spiky_hair",
+              "blue_shorts",
+              "collectible_toy",
+              "dark_inner_ears",
+              "figurine",
+              "large_anime_eyes",
+              "light_tan_skin",
+              "long_upright_tan_ears",
+              "photo_style",
+              "rabbit_ear_placement",
+              "red_jacket",
+              "round_gold_base",
+              "sandals",
+              "separate_face_ears",
+              "structure_body_accessory_connections",
+              "structure_head_face_connections",
+              "structure_limb_connections",
+              "structure_subject_scene_separation",
+              "subject_back_straw_hat",
+              "subject_blue_shorts",
+              "subject_dark_inner_ears",
+              "subject_gold_coin_base",
+              "subject_red_upper_garment",
+              "subject_spiky_black_hair",
+              "subject_top_ear_geometry",
+              "subject_under_eye_scar"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "fail",
+              "unjudgeable"
+            ]
+          },
+          "candidate_region": {
+            "type": "string"
+          },
+          "candidate_observation": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

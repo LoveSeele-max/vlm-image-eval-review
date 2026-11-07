@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "policy_id": "whole_image_2048_512_v1",
+  "status": "frozen",
+  "image_order": ["REF-MAIN", "REF-SUPPLEMENT", "CANDIDATE"],
+  "reference_max_long_edge": 2048,
+  "candidate_max_long_edge": 512,
+  "apply_exif_transpose": true,
+  "color_mode": "RGB",
+  "format": "PNG",
+  "resample": "LANCZOS",
+  "crop": false,
+  "upscale": false,
+  "image_detail_requested": "high",
+  "detail_status": "request_contract_pending_D04_provider_validation",
+  "human_display": "使用同一整图预处理结果，可缩放查看，不单独裁出细节作为额外模型图片。",
+  "limits": "本地输出尺寸及可判性不证明服务端保留同等分辨率，也不证明模型可识别；D04 核对真实请求，若不兼容须记录修订，禁止静默降为 low。"
+}

@@ -1,0 +1,45 @@
+{
+  "review_id": "C04_reference_readability_v1",
+  "reviewed_on": "2026-11-07",
+  "reviewer": "Codex 本地视觉检查；非用户人工初标，非外部 VLM 接口结果",
+  "image_policy_id": "whole_image_2048_512_v1",
+  "method": "检查由固定原图整图缩放得到的两张 1536×2048 PNG，无裁切、无单独局部输入；只核查参考，不查看候选评测结果。",
+  "observations": [
+    {
+      "criterion_id": "subject_under_eye_scar",
+      "reference_id": "REF-MAIN",
+      "region": "参考画面右侧眼睛外下方至脸颊",
+      "observation": "可分辨深色长线及横向短划，和眼睛外轮廓、旁边白色面部图案不同。",
+      "decision": "保留必需项；候选按对应面部关系核对，不能机械要求始终位于画面右侧。"
+    },
+    {
+      "criterion_id": "subject_dark_inner_ears",
+      "reference_id": "REF-MAIN",
+      "region": "两根头顶长耳正面",
+      "observation": "浅棕耳部内部均可见深棕色区域，与外侧浅色区分；补充图主要展示耳背，不能用耳背补推内耳。",
+      "decision": "保留必需项；只见耳背或候选内耳模糊时使用不可判断。"
+    },
+    {
+      "criterion_id": "subject_back_straw_hat",
+      "reference_id": "REF-SUPPLEMENT",
+      "region": "后脑下方及背部",
+      "observation": "可辨黄褐帽体、帽檐、帽冠、编织纹理与红帽带；正面图只显示部分帽缘。",
+      "decision": "保留辅助项；候选角度受限时如实记录，不单独否决。"
+    },
+    {
+      "criterion_id": "subject_top_ear_geometry",
+      "reference_id": "REF-MAIN",
+      "region": "头顶发束后方",
+      "observation": "两根长耳及耳尖完整，两图共同展示与头部的位置关系。",
+      "decision": "保留必需项，继续使用原图，不使用切掉耳尖的旧裁切版。"
+    },
+    {
+      "criterion_ids": ["subject_spiky_black_hair", "subject_red_upper_garment", "subject_blue_shorts", "subject_gold_coin_base"],
+      "reference_ids": ["REF-MAIN", "REF-SUPPLEMENT"],
+      "observation": "可辨深色尖状发束、红色上衣、蓝色短裤与露出的腿、金色圆形钱币样底座；外侧白色转盘不属于底座。",
+      "decision": "维持 C01 原有边界及必需性。"
+    }
+  ],
+  "conclusion": "参考输入满足本轮规则的本地核对需要，维持 6 必需/2 辅助；未依据候选通过率调整。",
+  "limits": "不能保证 512×512 候选的每个细节均可判断，也不能证明服务端或模型能辨认这些细节。证据不足保持 unjudgeable，真实接口验证在 D04。"
+}

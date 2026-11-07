@@ -174,7 +174,13 @@ def evaluate_result(sample_id, result, expected, policy, task_status="succeeded"
     return output
 
 
-def load_context():
+def load_context(use_frozen=True):
+    if use_frozen:
+        frozen_names = ("ruleset.json", "reference_spec.json", "evaluation_spec.json",
+                        "sample_criteria.jsonl", "label_policy.json", "response_schema.json")
+        if any((DATA / name).exists() for name in frozen_names):
+            from freeze_rules import load_frozen_context
+            return load_frozen_context()
     policy_path = DATA / "label_policy.draft.json"
     policy = json.loads(policy_path.read_text(encoding="utf-8"))
     validate_policy(policy)
@@ -218,7 +224,9 @@ def main():
         "checks": "40 条样本元数据及必需性核验；未产生图片标签",
         "api_calls": 0,
     }
-    write_json(DATA / "label_policy.check.json", summary)
+    filename = ("label_policy.frozen.check.json" if policy["status"] == "frozen"
+                else "label_policy.check.json")
+    write_json(DATA / filename, summary)
     print(json.dumps(summary, ensure_ascii=True, indent=2))
 
 

@@ -1,0 +1,44 @@
+{
+  "rule_version": "rules_v1",
+  "image_policy_id": "whole_image_2048_512_v1",
+  "receipts": [
+    {
+      "role": "REF-MAIN",
+      "source_sha256": "854151e58d5d9dd03dea4aa70681f34471ce9320963df91d0a9a3474d77e987a",
+      "source_size": [
+        3072,
+        4096
+      ],
+      "output_size": [
+        1536,
+        2048
+      ],
+      "output_sha256": "6b71b516890b4d62aaca0f0d340ce2cb6febecdd63e3fbb918ba92dc71465af2",
+      "output_bytes": 3036662,
+      "mode": "RGB",
+      "format": "PNG",
+      "pillow_version": "12.2.0",
+      "policy_id": "whole_image_2048_512_v1"
+    },
+    {
+      "role": "REF-SUPPLEMENT",
+      "source_sha256": "374875be31b62c6240088087d3ab26ed604d1580e6587877eb9a0bb1806a429f",
+      "source_size": [
+        3072,
+        4096
+      ],
+      "output_size": [
+        1536,
+        2048
+      ],
+      "output_sha256": "0067da2ba0fbd1f0ccbf4de4410baa26756fc8aa65931a80ee6c7d2f002bc51e",
+      "output_bytes": 3125368,
+      "mode": "RGB",
+      "format": "PNG",
+      "pillow_version": "12.2.0",
+      "policy_id": "whole_image_2048_512_v1"
+    }
+  ],
+  "api_calls": 0,
+  "scope": "本地参考输入生成与视觉检查；不证明服务端识别能力"
+}

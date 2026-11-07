@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "policy_id": "labels_aggregation_C03_v1",
+  "status": "frozen",
+  "approved_on": "2026-11-07",
+  "frozen_at": "2026-11-07T19:18:12+08:00",
+  "basis": "C03 用户认可的规则；C04 完成参考本地可判性核查并保存正式规则包。",
+  "labels": {
+    "pass": "对应部位有足够可见证据，符合该条全部要求。",
+    "fail": "对应部位足够清楚，存在明确矛盾或可确认的目标缺失。",
+    "unjudgeable": "要求适用，但遮挡、裁切、模糊、角度或细节过小使证据不足。",
+    "not_applicable": "仅用于规则预先明确不适用的要求；不能用来跳过遮挡、辅助项或必需项。"
+  },
+  "active_label_statuses": [
+    "pass",
+    "fail",
+    "unjudgeable"
+  ],
+  "not_applicable_policy": "当前有效条目全部适用，禁止输出 not_applicable；原文未要求的提示词条目及排除的木桌不发放。",
+  "envelope_fields": [
+    "sample_id",
+    "labels"
+  ],
+  "label_fields": [
+    "criterion_id",
+    "status",
+    "candidate_region",
+    "candidate_observation",
+    "reason"
+  ],
+  "evidence_fields": [
+    "candidate_region",
+    "candidate_observation",
+    "reason"
+  ],
+  "evidence_policy": "三个证据字段均为非空字符串；unjudgeable 应写明受限部位及原因。结构校验不能证明文字证据真实或推理正确。",
+  "dimensions": [
+    "subject_features",
+    "structural_integrity",
+    "prompt_adherence"
+  ],
+  "requiredness_source": "只从 C01/C02 定义读取，结果不能自行提交 required 或 dimension 覆盖规则。",
+  "completeness": "每张图必须恰好覆盖全部有效条目，包括辅助项；拒收缺失、重复、未知编号、错样本、非法状态及缺失证据。",
+  "aggregation_order": [
+    "engineering_failure",
+    "required_fail",
+    "required_unjudgeable",
+    "all_required_pass"
+  ],
+  "candidate_statuses": [
+    "needs_review",
+    "candidate_fail",
+    "candidate_pass"
+  ],
+  "engineering_statuses": [
+    "task_not_succeeded",
+    "invalid_result",
+    "valid_result"
+  ],
+  "auxiliary_policy": "辅助项必须完整记录；其 fail 或 unjudgeable 本身不影响维度及整体候选状态。",
+  "dimension_policy": "工程失败时所有维度均 needs_review；完整合法后，各维度按必需项 fail、unjudgeable、全 pass 独立汇总，整体按全部必需项同序汇总。",
+  "confidence_policy": "不使用模型自报置信度、加权平均或总分代替条目判定；候选状态不等同于最终人工审核。",
+  "source_files_sha256": {
+    "reference_spec.json": "f59aa9fa708006baec7b29491d1f739839bc866b11f585c5bad3be2d92c65ec0",
+    "evaluation_spec.json": "37b066c8113f1cdd4b8773aa3f6fd8ef398d88dc01b2b63ebca577ed4b8d48ad",
+    "sample_criteria.jsonl": "adc34d5328dc5488ff7e9a087871e3f45be797841ef7816bf5df0041ea802d61",
+    "manifest.jsonl": "60e2c63bf8a1b778f5e461abf510d0698a8f2686f7aeb4b106263f024e708913"
+  },
+  "rule_version": "rules_v1"
+}
