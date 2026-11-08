@@ -1,7 +1,7 @@
 """D02: one Responses request, strict parsing and private evidence files.
 
-Default CLI mode builds a request without sending it. Scheduling, retries, cache
-and holdout execution are reserved for subsequent numbered tasks.
+Default CLI mode builds a request without sending it. The --send entry point
+uses D03's durable scheduler; holdout execution remains locked.
 """
 
 import argparse
@@ -17,6 +17,7 @@ import time
 import uuid
 from contextlib import closing
 from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from http.client import HTTPException, IncompleteRead
 from pathlib import Path
 from urllib.error import HTTPError, URLError
@@ -109,7 +110,24 @@ def scrub_raw(raw, secret):
 
 def write_json(path, value, secret=""):
     # Serialize first so even credential echoes in nested diagnostics are removed.
-    path.write_bytes(scrub_raw(encoded(value) + b"\n", secret))
+    temporary = path.with_name(path.name + "." + uuid.uuid4().hex + ".tmp")
+    try:
+        temporary.write_bytes(scrub_raw(encoded(value) + b"\n", secret))
+        temporary.replace(path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def retry_after_seconds(headers):
+    value = headers.get("Retry-After", "")
+    try:
+        seconds = float(value)
+    except ValueError:
+        try:
+            seconds = (parsedate_to_datetime(value) - datetime.now(timezone.utc)).total_seconds()
+        except (TypeError, ValueError, OverflowError):
+            return None
+    return seconds if math.isfinite(seconds) and 0 <= seconds <= 86400 else None
 
 
 def read_response(response):
@@ -282,7 +300,7 @@ def require_initial_snapshot(sample_id, database=PRIVATE / "annotations.sqlite3"
 
 
 def execute_request(prepared, base_url, *, send=False, output_root=PRIVATE / "judge_runs",
-                    timeout=180):
+                    timeout=180, run_id=None, attempt_number=1):
     """Single attempt only. D03 can compose this with its own task scheduler."""
     settings = validate_settings(base_url, prepared["body"]["model"])
     if type(timeout) not in (int, float) or not math.isfinite(timeout) or not 0 < timeout <= 600:
@@ -290,8 +308,12 @@ def execute_request(prepared, base_url, *, send=False, output_root=PRIVATE / "ju
     secret = os.environ.get("VLM_API_KEY", "").strip() if send else ""
     if send and (not secret or any(char.isspace() for char in secret)):
         raise ValueError("VLM_API_KEY 未设置或含空白字符，未发送请求。")
+    if run_id is not None and (not isinstance(run_id, str) or not re.fullmatch(r"[A-Za-z0-9_-]{8,80}", run_id)):
+        raise ValueError("尝试编号非法。")
+    if type(attempt_number) is not int or not 1 <= attempt_number <= 1000:
+        raise ValueError("尝试次数非法。")
     # An immutable directory per attempt; no overwriting another run's evidence.
-    run_id = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:12]
+    run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:12]
     folder = Path(output_root) / run_id
     folder.mkdir(parents=True, exist_ok=False)
     body = encoded(prepared["body"])
@@ -301,11 +323,12 @@ def execute_request(prepared, base_url, *, send=False, output_root=PRIVATE / "ju
         "run_id": run_id, **prepared["metadata"],
         "endpoint": settings["base_url"] + "/responses", "timeout_seconds": timeout,
         "requested_model": settings["model"], "max_output_tokens": prepared["body"]["max_output_tokens"],
-        "stream": False, "store": False, "attempt": 1,
+        "stream": False, "store": False, "attempt": attempt_number,
         "mode": "single_request" if send else "dry_run",
         "request_started": False, "http_status": None, "error_code": None,
         "provider_status": None, "returned_model": None, "usage": None,
         "elapsed_seconds": 0, "completed_at": None,
+        "retry_after_seconds": None,
         "schema_enforcement": "not_proven_by_local_validation",
     }
     write_json(folder / "run.json", receipt, secret)
@@ -325,9 +348,11 @@ def execute_request(prepared, base_url, *, send=False, output_root=PRIVATE / "ju
         try:
             with build_opener(NoRedirect()).open(request, timeout=timeout) as response:
                 receipt["http_status"] = response.status
+                receipt["retry_after_seconds"] = retry_after_seconds(response.headers)
                 raw, receipt["error_code"] = read_response(response)
         except HTTPError as exc:
             receipt["http_status"] = exc.code
+            receipt["retry_after_seconds"] = retry_after_seconds(exc.headers)
             try:
                 raw, _ = read_response(exc)
             finally:
@@ -390,6 +415,12 @@ def main():
     prepared = build_request(args.sample_id, settings["model"], args.max_output_tokens)
     if initial_sha:
         prepared["metadata"]["initial_snapshot_sha256"] = initial_sha
+    if args.send:
+        from run_tasks import send_one
+        result = send_one(prepared, settings["base_url"], args.timeout)
+        print(json.dumps(result, ensure_ascii=True, indent=2))
+        return 1 if any(batch["status"] == "stopped" or any(
+            task["status"] == "failed" for task in batch["tasks"]) for batch in result["batches"]) else 0
     folder, receipt = execute_request(
         prepared, settings["base_url"], send=args.send, timeout=args.timeout)
     # Never print prompts, model answers, URLs or credentials to the console.
@@ -405,6 +436,9 @@ def main():
 if __name__ == "__main__":
     try:
         sys.exit(main())
+    except KeyboardInterrupt:
+        print("运行已中断，记录已保留。请使用 run_tasks.py 的 recover 或 resume。", file=sys.stderr)
+        sys.exit(130)
     except ValueError as exc:
         # Our validators emit fixed messages, never arbitrary provider bodies.
         message = scrub_text(str(exc), os.environ.get("VLM_API_KEY", "").strip())
