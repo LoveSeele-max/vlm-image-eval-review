@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "reference_version": "human_reference_v1",
+  "relative_private_path": "human_references/human_reference_v1",
+  "frozen_at": "2026-11-09T11:15:07.795967+08:00",
+  "seal_sha256": "4f4dd01c15448f89c2cc33cd2e6b00f8efbc1345f53f6acad093cc381695e6fa",
+  "initial_labels_sha256": "3319f8db39783a33b91e30f5874f49d7b489059e4dab315342689234cb111744",
+  "sample_count": 40,
+  "item_count": 720,
+  "primary_label_source": "confirmed_initial_snapshots",
+  "revision_policy": "Primary metrics use this initial reference; revisions are kept with reasons and reported separately."
+}
