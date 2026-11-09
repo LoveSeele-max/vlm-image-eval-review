@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>保留集三方复核</title><link rel="stylesheet" href="/review.css"><link rel="stylesheet" href="/holdout.css"><script defer src="/holdout.js"></script></head>
+<body>
+<header><div><p class="eyebrow">VLM 辅助生图评测 · 保留集</p><h1>人工初标与 V1 / V2 复核</h1><p class="muted">先核对图片和固定规则，再确认处理结论。冻结初标与主要指标保留。</p></div><div class="header-actions"><a href="/api/export" download="holdout-reviews.json">下载复核记录</a><button id="reload" type="button">重新核验来源</button></div></header>
+<main>
+<section class="summary" id="summary" aria-label="复核进度"></section>
+<p id="version" class="muted small"></p><p id="notice" role="status" aria-live="polite"></p>
+<div class="layout"><aside>
+<h2>复核队列</h2>
+<label for="review-state">处理状态</label><select id="review-state"><option value="pending">待复核（含待裁定）</option><option value="all">全部状态</option><option value="resolved">已明确处理</option><option value="unresolved">暂不能裁定</option></select>
+<label for="sample">样本</label><select id="sample"><option value="all">全部保留集</option></select>
+<label for="dimension">维度</label><select id="dimension"><option value="all">全部维度</option><option value="subject_features">主体特征</option><option value="structural_integrity">结构完整性</option><option value="prompt_adherence">选定提示词要求</option></select>
+<label for="query">搜索编号或条目</label><input id="query" type="search" maxlength="200" placeholder="如 sample_002 或草帽">
+<fieldset><legend>按类型查看</legend><div id="filters">
+<button data-filter="binary" class="filter active" type="button" aria-pressed="true">人机二元冲突 <span></span></button>
+<button data-filter="version_change" class="filter" type="button" aria-pressed="false">两版状态不同 <span></span></button>
+<button data-filter="ai_uncertain" class="filter" type="button" aria-pressed="false">AI 不可判断 <span></span></button>
+<button data-filter="human_uncertain" class="filter" type="button" aria-pressed="false">人工初标不可判断 <span></span></button>
+<button data-filter="engineering" class="filter" type="button" aria-pressed="false">至少一版工程缺失 <span></span></button>
+<button data-filter="all" class="filter" type="button" aria-pressed="false">全部条目 <span></span></button>
+</div></fieldset><p class="muted small">类型数量可能重叠。工程缺失不算图片不符。默认每批 5 项，先处理二元冲突。</p>
+<label for="annotator">确认人</label><input id="annotator" type="text" value="水水" maxlength="100">
+<p class="muted small">结论仅在点击确认保存后记入复核历史。页面不提供模型调用、失败重试或规则修改。</p>
+</aside><div class="workspace">
+<div class="result-heading"><h2 id="result-title">待复核条目</h2><span id="result-count" class="muted"></span></div>
+<nav class="pagination" aria-label="队列翻页"><button id="previous" type="button">上一批</button><span id="page-label"></span><button id="next" type="button">下一批</button><button id="refresh" type="button">刷新队列</button></nav>
+<div id="results"></div>
+</div></div><footer>单主体、小样本；作者初标含批量指定判断与助手辅助文字。修订单独记录，主要指标仍使用 human_reference_v1。</footer>
+</main>
+<dialog id="image-dialog"><button id="close-image" type="button">关闭放大图</button><div class="zoom-controls"><button id="zoom-out" type="button" aria-label="缩小图片">−</button><span id="zoom-label">适应窗口</span><button id="zoom-in" type="button" aria-label="放大图片">＋</button><button id="zoom-fit" type="button">适应窗口</button></div><div id="image-viewport"><img id="large-image" alt="放大图"></div></dialog>
+</body></html>
