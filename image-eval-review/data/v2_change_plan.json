@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "task": "F03",
+  "analysis_partition": "development",
+  "source_prompt_version": "judge_v1",
+  "target_prompt_version": "judge_v2",
+  "rule_version": "rules_v1",
+  "frozen_human_reference": "human_reference_v1",
+  "development_sample_count": 10,
+  "successful_sample_count": 8,
+  "engineering_failed_sample_count": 2,
+  "valid_model_item_count": 143,
+  "engineering_missing_item_count": 37,
+  "disagreement_item_count": 14,
+  "interpretation": "State disagreement is not a confirmed model error. Author labels remain frozen. No holdout model evidence informs the changes.",
+  "changes": [
+    {"id": "R01", "criterion_ids": ["subject_under_eye_scar"], "disagreement_count": 3, "focus": "Explain face correspondence, visible detail and absence versus insufficient evidence; no pixel threshold."},
+    {"id": "R02", "criterion_ids": ["subject_spiky_black_hair"], "disagreement_count": 3, "focus": "Describe color and visible pointed hair bundles separately; honor allowed variation and occlusion."},
+    {"id": "R03", "criterion_ids": ["subject_gold_coin_base"], "disagreement_count": 4, "focus": "Explain color, outline and coin or medal appearance without requiring exact relief or accepting any round gold pedestal."},
+    {"id": "R04", "criterion_ids": ["subject_back_straw_hat"], "disagreement_count": 2, "focus": "Identify the target back hat and its visible attributes; do not infer hidden absence from a front view or an unrelated head hat."},
+    {"id": "R05", "criterion_ids": ["separate_face_ears"], "disagreement_count": 1, "focus": "Explain which top ears, face-side ears or connections are visible or occluded, without symmetric completion."},
+    {"id": "R06", "criterion_ids": ["structure_limb_connections"], "disagreement_count": 1, "focus": "Name the relevant limb and obscured connection; distinguish normal crossed poses from evidence insufficient for the required check."}
+  ],
+  "unchanged": ["criteria", "requiredness", "pass_fail_unjudgeable_boundaries", "aggregation", "response_schema", "reference_images", "image_policy", "model", "endpoint", "max_output_tokens", "timeout", "retry_policy", "frozen_human_labels", "split"],
+  "status": "analysis_completed_not_a_quality_improvement_claim"
+}
