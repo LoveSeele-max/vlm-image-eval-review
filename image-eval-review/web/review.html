@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>开发集人机对照</title><link rel="stylesheet" href="/review.css"><script defer src="/review.js"></script></head>
+<body>
+<header><div><p class="eyebrow">VLM 辅助生图评测 · 开发集 V1</p><h1>人机对照与分歧查看</h1><p class="muted">人工列使用冻结初始参考。分歧需要复核，工程失败单列。</p></div><div class="header-actions"><span class="badge">保留集未解锁</span><button id="reload" type="button">重新核验结果</button></div></header>
+<main>
+<section class="summary" aria-label="本批结果概览" id="summary"></section>
+<p id="version" class="muted small"></p><p id="notice" role="status" aria-live="polite"></p>
+<div class="layout">
+<aside>
+<h2>筛选条目</h2>
+<label for="sample">样本</label><select id="sample"><option value="all">全部开发集</option></select>
+<label for="dimension">维度</label><select id="dimension"><option value="all">全部维度</option><option value="subject_features">主体特征</option><option value="structural_integrity">结构完整性</option><option value="prompt_adherence">选定提示词要求</option></select>
+<label for="query">搜索编号或条目</label><input id="query" type="search" placeholder="如 sample_008 或长耳" maxlength="200">
+<fieldset><legend>查看范围</legend><div id="filters">
+<button data-filter="all" class="filter active" aria-pressed="true" type="button">全部条目 <span></span></button>
+<button data-filter="disagreement" class="filter" aria-pressed="false" type="button">人机状态分歧 <span></span></button>
+<button data-filter="unjudgeable" class="filter" aria-pressed="false" type="button">任一方不可判断 <span></span></button>
+<button data-filter="engineering_failure" class="filter" aria-pressed="false" type="button">工程失败 / 未返回 <span></span></button>
+</div></fieldset>
+<p class="muted small">筛选按条目生效，分歧与不可判断可能重叠。失败图片的全部条目保留，AI 判断显示未返回。</p>
+<p class="muted small">本页只读。修改人工记录请使用原标注页，修订不会替换这里的冻结初始参考。</p>
+</aside>
+<div class="workspace"><div class="result-heading"><h2 id="result-title">加载结果</h2><span id="result-count" class="muted"></span></div><div id="results"></div></div>
+</div>
+<footer>单主体、小样本，人工参考含作者批量指定的判断及助手辅助文字。工程通过不代表图片质量合格。</footer>
+</main>
+<dialog id="image-dialog"><button id="close-image" type="button">关闭放大图</button><img id="large-image" alt="放大图"></dialog>
+</body></html>
