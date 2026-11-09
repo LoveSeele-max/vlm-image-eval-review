@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "status": "frozen",
+  "frozen_at": "2026-11-09T12:28:18.173736+08:00",
+  "rule_version": "rules_v1",
+  "versions": {
+    "judge_v1": {
+      "template": "judge_v1.txt",
+      "text_sha256": "bccc651ce8fe0b31f1b48f0ca4f17baad3e3417a2de7b8a1905a021b50b9c0e4",
+      "frozen_at": "2026-11-07T19:18:12+08:00",
+      "compatibility": "legacy_request_bytes_and_cache_identity_unchanged"
+    },
+    "judge_v2": {
+      "template": "judge_v2.txt",
+      "text_sha256": "5c6560aa811a7b770653a638a1f9ad71031e9fa35cbec91a3cf5d2ca6bcf8499",
+      "changes": [
+        "R01",
+        "R02",
+        "R03",
+        "R04",
+        "R05",
+        "R06"
+      ],
+      "scope": "explanation_only_appendix"
+    }
+  },
+  "appendix_sha256": "ca4d94e13e82949d597b4df23d98556722841b77bd7790132d4986ced9a11fa6",
+  "fixed_data_text_sha256": {
+    "ruleset.json": "da110167662a67406299b3dd09a225c751d6bda07a1de7892b5949024a5d4d39",
+    "manifest.jsonl": "60e2c63bf8a1b778f5e461abf510d0698a8f2686f7aeb4b106263f024e708913",
+    "split.json": "cea39c7ecf2b67ff7732ff07da6a64074a06dbfe0caec97259576dc14d30a61b",
+    "reference_spec.json": "f59aa9fa708006baec7b29491d1f739839bc866b11f585c5bad3be2d92c65ec0",
+    "evaluation_spec.json": "37b066c8113f1cdd4b8773aa3f6fd8ef398d88dc01b2b63ebca577ed4b8d48ad",
+    "sample_criteria.jsonl": "adc34d5328dc5488ff7e9a087871e3f45be797841ef7816bf5df0041ea802d61",
+    "label_policy.json": "fdb8a7ea5ae301ef70b1510783a7a63289481e3ce0417613172feb908324bc16",
+    "response_schema.json": "c0e4a0dd06a8d0538594f6ffa8763d04e0b89098a7bd310e31c511966befd7d5",
+    "reference_assets.json": "895c165b021e0f810a6a90fe0643a6c908bf4a05c2019b01bb4c5df0d2ff99a5",
+    "image_input_policy.json": "3d5e622ff9db0a432a18e7e3d339cbd277514890b6157bd9caaa42c9ca5583bd",
+    "human_reference_registration.json": "6339d9c59eaffe5327d0d10af5496cee3415781e4c2e828dda9991c5ff7da585",
+    "v2_change_plan.json": "95b2f416c0f8a6223049ea83c8aacba36ae67ee9061b681bc871c9dc2c187b6f"
+  },
+  "legacy_engine_text_sha256": {
+    "freeze_rules.py": "6d17369b91074b28537d423d2ff4e8823578567be49b9b5b873b6f261a78ca9d",
+    "run_store.py": "1d8986f63dfbaf5f862228f855dd470f093e3354055f22a8047ff0f953dac0af",
+    "run_tasks.py": "746220bb688b77f22e59b9fb41f552031824619f58fb6345e9d04a0eeaa9d5bc",
+    "judge_client.py": "ae83110f04ba370e542582fdc18c9d71225d779ad12a225a7b43be8f37dd284b",
+    "prepare_image.py": "dbf73cc92326da9e6eb83519ecd9cc0e2f35b9c9478028f4ad5cb21337f57a46",
+    "evaluate_results.py": "cc220687fee2130f35ec0f23b619798cd31ee92f56710e3f8aabbdeefbea7ea3"
+  },
+  "version_builder_text_sha256": "35670cd8f670d8dd260ecb5ba748e3e68f91460fc656cde80bd5598158fa0dbe",
+  "human_reference_version": "human_reference_v1",
+  "human_reference_seal_sha256": "4f4dd01c15448f89c2cc33cd2e6b00f8efbc1345f53f6acad093cc381695e6fa",
+  "comparison_profile": {
+    "model": "gpt-6.1-terra",
+    "endpoint_base_sha256": "7063d7a5f642a01d5493f7abcb044043e38b645213c1bc7d559503cae9348d47",
+    "max_output_tokens": 8192,
+    "timeout_seconds": 180.0,
+    "max_attempts": 3,
+    "stream": false,
+    "store": false
+  },
+  "source_stage": "F03_development_only",
+  "v2_model_calls": 0,
+  "limits": "Frozen instructions and local parity checks do not establish V2 quality improvement or backend identity.",
+  "comparison_profile_sha256": "ab4c2199c9419c265d2cf279f258ffd765b5b3c1ed3420f41051a094d6656928"
+}
